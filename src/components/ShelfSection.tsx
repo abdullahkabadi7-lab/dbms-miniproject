@@ -10,8 +10,8 @@ export const ShelfSection: React.FC = () => {
   const isHoveringRef = useRef<boolean>(false);
   const [isHovering, setIsHovering] = useState<boolean>(false);
 
-  // Reduced hover radius to 60% of previous (72px)
-  const HOVER_RADIUS = 72;
+  // Hover radius increased by ~33% (from 72px to 96px)
+  const HOVER_RADIUS = 96;
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLElement>) => {
     if (!sectionRef.current) return;
