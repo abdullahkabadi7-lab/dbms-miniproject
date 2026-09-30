@@ -10,7 +10,7 @@ export const CustomerLayout: React.FC = () => {
   return (
     <div className="min-h-screen bg-black text-white flex flex-col selection:bg-white selection:text-black">
       <Navbar />
-      <main className={`flex-1 animate-in fade-in duration-300 ${isLanding ? '' : 'pt-[92px]'}`}>
+      <main className={`flex-1 animate-in fade-in duration-300 ${isLanding ? '' : 'pt-16'}`}>
         <Outlet />
       </main>
       <Footer />

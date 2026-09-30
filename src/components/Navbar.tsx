@@ -58,25 +58,6 @@ export const Navbar: React.FC = () => {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40 w-full bg-black/75 backdrop-blur-md border-b border-white/[0.08] transition-all duration-300">
-      {/* Top utility alert bar */}
-      <div className="bg-[#050505] border-b border-white/[0.06] px-4 py-1.5 text-[11px] font-mono text-neutral-400 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span>
-          <span className="tracking-wider">CERTIFIED ORGANIC PROVISIONS &bull; REAL-TIME INVENTORY</span>
-        </div>
-        <div className="flex items-center gap-3">
-          <span className="hidden sm:inline text-neutral-400">
-            SESSION: <span className="text-white font-semibold">{currentUser.full_name}</span> ({currentUser.role.toUpperCase()})
-          </span>
-          <button
-            onClick={handleToggleRole}
-            className="text-[10px] uppercase font-mono px-2 py-0.5 border border-white/10 hover:border-white/30 text-neutral-300 hover:text-white transition-colors"
-          >
-            SWITCH TO {currentUser.role === 'admin' ? 'CUSTOMER' : 'ADMIN'}
-          </button>
-        </div>
-      </div>
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Left: Brand Logo */}
         <div className="flex items-center gap-8">
