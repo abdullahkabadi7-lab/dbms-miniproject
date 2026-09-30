@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { ArrowDown, ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowDown, ArrowRight } from 'lucide-react';
 
 interface CinematicEntranceProps {
   onComplete: () => void;
@@ -14,7 +14,6 @@ export const CinematicEntrance: React.FC<CinematicEntranceProps> = ({ onComplete
 
   const [isAtStart, setIsAtStart] = useState<boolean>(true);
   const [progress, setProgress] = useState<number>(0);
-  const [hasReachedEnd, setHasReachedEnd] = useState<boolean>(false);
 
   // Wheel virtual scroll tracking
   const targetProgressRef = useRef<number>(0);
@@ -187,13 +186,9 @@ export const CinematicEntrance: React.FC<CinematicEntranceProps> = ({ onComplete
           }
         }
 
-        if (nextProgress >= 0.99) {
-          setHasReachedEnd(true);
-          setTimeout(() => {
-            onComplete();
-          }, 350);
-        } else {
-          setHasReachedEnd(false);
+        if (nextProgress >= 0.985) {
+          onComplete();
+          return;
         }
       }
 
@@ -206,7 +201,7 @@ export const CinematicEntrance: React.FC<CinematicEntranceProps> = ({ onComplete
       isRunning = false;
       if (rafIdRef.current) cancelAnimationFrame(rafIdRef.current);
     };
-  }, [drawFrame]);
+  }, [drawFrame, onComplete]);
 
   const handleEnterStore = () => {
     onComplete();
@@ -235,47 +230,23 @@ export const CinematicEntrance: React.FC<CinematicEntranceProps> = ({ onComplete
       <div className="absolute inset-0 z-30 pointer-events-none flex flex-col justify-between p-6 sm:p-12">
         {/* Top Header */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <span className="font-display font-black text-2xl tracking-tighter text-white drop-shadow-md">
-              SMART<span className="text-[#00A8FF]">MART</span>
+              SMART<span className="text-neutral-400">MART</span>
             </span>
-            <span className="hidden sm:inline-block text-[10px] font-mono px-2.5 py-0.5 border border-white/20 text-neutral-300 backdrop-blur-md bg-black/50">
-              IMMERSIVE ENTRANCE
-            </span>
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mb-2"></span>
           </div>
 
           <div className="flex items-center gap-3 pointer-events-auto">
             <button
               onClick={handleEnterStore}
-              className="group flex items-center gap-2 px-4 py-2 bg-black/60 hover:bg-[#00A8FF] text-white hover:text-black font-mono text-xs uppercase tracking-widest border border-white/20 hover:border-[#00A8FF] backdrop-blur-md transition-all duration-200 cursor-pointer"
+              className="group flex items-center gap-2 px-4 py-2 bg-black/60 hover:bg-white text-white hover:text-black font-mono text-xs uppercase tracking-widest border border-white/20 hover:border-white backdrop-blur-md transition-all duration-200 cursor-pointer"
             >
-              <span>ENTER STORE</span>
+              <span>SKIP ENTRANCE</span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
             </button>
           </div>
         </div>
-
-        {/* Center Completion Card when reaching the end */}
-        {hasReachedEnd && (
-          <div className="self-center flex flex-col items-center gap-4 pointer-events-auto animate-in fade-in zoom-in-95 duration-300">
-            <div className="text-center font-display uppercase tracking-tight text-white drop-shadow-lg">
-              <span className="block text-xs font-mono text-[#00A8FF] tracking-widest mb-1 flex items-center justify-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-[#00A8FF]" />
-                TRANSITION COMPLETE
-              </span>
-              <h2 className="text-3xl sm:text-5xl font-extrabold">
-                WELCOME TO SMARTMART
-              </h2>
-            </div>
-            <button
-              onClick={handleEnterStore}
-              className="inline-flex items-center gap-3 px-8 py-4 bg-[#00A8FF] hover:bg-[#29C5FF] text-black font-mono text-sm font-bold uppercase tracking-widest shadow-[0_0_30px_rgba(0,168,255,0.4)] hover:shadow-[0_0_40px_rgba(0,168,255,0.6)] transition-all cursor-pointer"
-            >
-              <span>ENTER THE AISLES</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-        )}
 
         {/* Bottom Bar: Instructions */}
         <div className="flex flex-col items-center gap-4">
@@ -292,9 +263,9 @@ export const CinematicEntrance: React.FC<CinematicEntranceProps> = ({ onComplete
           )}
 
           {/* Scrub status while actively scrubbing */}
-          {!isAtStart && !hasReachedEnd && (
+          {!isAtStart && (
             <div className="flex items-center gap-3 font-mono text-[10px] tracking-widest uppercase text-neutral-300 bg-black/70 backdrop-blur-md px-4 py-1.5 border border-white/10">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#00A8FF] animate-pulse" />
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
               <span>SCROLL DOWN TO ADVANCE • SCROLL UP TO REVERSE ({Math.round(progress * 100)}%)</span>
             </div>
           )}
