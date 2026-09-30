@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-primary: #000000;
+    --bg-surface: #050505;
+    --bg-card: #0A0A0A;
+    --accent-electric: #00A8FF;
+    --accent-bright: #29C5FF;
+    --text-primary: #FFFFFF;
+    --text-secondary: #A0A0A0;
+    --border-color: #1A1A1A;
+  }
+
+  html, body {
+    background-color: #000000 !important;
+    color: #FFFFFF;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+  }
+
+  h1, h2, h3, h4, .font-display {
+    font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  /* Custom subtle dark scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #000000;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #1A1A1A;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #00A8FF;
+  }
+}
+
+/* Custom editorial effects */
+.editorial-title {
+  letter-spacing: -0.05em;
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+
+.text-stroke-white {
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.25);
+  color: transparent;
+}
+
+.electric-border-glow {
+  border-color: #00A8FF;
+  box-shadow: 0 0 15px rgba(0, 168, 255, 0.2);
+}
+
+.electric-glow {
+  text-shadow: 0 0 20px rgba(0, 168, 255, 0.4);
+}
