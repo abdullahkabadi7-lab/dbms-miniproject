@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { ArrowRight, Sparkles } from 'lucide-react';
 
 export const ShelfSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
@@ -70,16 +69,6 @@ export const ShelfSection: React.FC = () => {
     return () => cancelAnimationFrame(animId);
   }, []);
 
-  // Smooth scroll directly to Image 2 (Landing Page Hero) directly below
-  const handleScrollToLandingHero = () => {
-    const heroSection = document.getElementById('store-hero-section');
-    if (heroSection) {
-      heroSection.scrollIntoView({ behavior: 'smooth' });
-    } else {
-      window.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
-    }
-  };
-
   return (
     <section
       ref={sectionRef}
@@ -118,52 +107,14 @@ export const ShelfSection: React.FC = () => {
         />
       </div>
 
-      {/* ======================================================== */}
-      {/* IMAGE 1 UI OVERLAYS (Matches user's screenshot exactly)  */}
-      {/* ======================================================== */}
-
-      {/* Top Header */}
-      <div className="relative z-20 p-6 sm:p-12 flex items-center justify-between pointer-events-none">
-        <div className="flex items-center gap-3">
-          <span className="font-display font-black text-2xl tracking-tighter text-white drop-shadow-md">
-            SMART<span className="text-[#00A8FF]">MART</span>
-          </span>
-          <span className="hidden sm:inline-block text-[10px] font-mono px-2.5 py-0.5 border border-white/20 text-neutral-300 backdrop-blur-md bg-black/50">
-            IMMERSIVE ENTRANCE
-          </span>
-        </div>
-
-        <div className="pointer-events-auto">
-          <button
-            onClick={handleScrollToLandingHero}
-            className="group flex items-center gap-2 px-4 py-2 bg-black/60 hover:bg-[#00A8FF] text-white hover:text-black font-mono text-xs uppercase tracking-widest border border-white/20 hover:border-[#00A8FF] backdrop-blur-md transition-all duration-200 cursor-pointer"
-          >
-            <span>ENTER STORE</span>
-            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-          </button>
-        </div>
-      </div>
-
-      {/* Center Callout: Exactly as in Image 1 screenshot */}
-      <div className="relative z-20 self-center flex flex-col items-center gap-4 text-center my-auto px-4">
-        <div className="font-display uppercase tracking-tight text-white drop-shadow-lg">
-          <span className="block text-xs font-mono text-[#00A8FF] tracking-widest mb-1.5 flex items-center justify-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-[#00A8FF]" />
-            TRANSITION COMPLETE
-          </span>
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight drop-shadow-2xl">
-            WELCOME TO SMARTMART
-          </h1>
-        </div>
-
-        {/* Action Button: Connects directly to Image 2 (Landing Page Hero) below */}
-        <button
-          onClick={handleScrollToLandingHero}
-          className="inline-flex items-center gap-3 px-8 py-4 bg-[#00A8FF] hover:bg-[#29C5FF] text-black font-mono text-sm font-bold uppercase tracking-widest shadow-[0_0_30px_rgba(0,168,255,0.4)] hover:shadow-[0_0_40px_rgba(0,168,255,0.6)] transition-all cursor-pointer mt-2"
-        >
-          <span>ENTER THE AISLES</span>
-          <ArrowRight className="w-4 h-4" />
-        </button>
+      {/* Center Callout: Clean title over the interactive spotlight */}
+      <div className="relative z-20 self-center flex flex-col items-center gap-3 text-center my-auto px-4 pt-24 pointer-events-none">
+        <h1 className="font-display text-4xl sm:text-6xl lg:text-7xl font-extrabold uppercase tracking-tight text-white drop-shadow-[0_4px_30px_rgba(0,0,0,0.9)]">
+          WELCOME TO SMARTMART
+        </h1>
+        <p className="text-xs sm:text-sm font-mono text-neutral-300 tracking-widest uppercase drop-shadow-md">
+          HOVER TO INSPECT AISLE STOCK &bull; SCROLL DOWN TO EXPLORE
+        </p>
       </div>
 
       {/* Empty bottom spacer (No scrollbar) */}

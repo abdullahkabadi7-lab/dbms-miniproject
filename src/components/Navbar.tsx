@@ -57,7 +57,7 @@ export const Navbar: React.FC = () => {
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-black/95 backdrop-blur-md border-b border-neutral-900 transition-all duration-300">
+    <header className="fixed top-0 left-0 right-0 z-40 w-full bg-black/75 backdrop-blur-md border-b border-white/[0.08] transition-all duration-300">
       {/* Top utility alert bar */}
       <div className="bg-[#050505] border-b border-white/[0.06] px-4 py-1.5 text-[11px] font-mono text-neutral-400 flex items-center justify-between">
         <div className="flex items-center gap-2">
