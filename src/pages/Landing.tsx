@@ -7,6 +7,7 @@ import { ProductCard } from '../components/ProductCard';
 import { CategoryCard } from '../components/CategoryCard';
 import { CinematicEntrance } from '../components/cinematic/CinematicEntrance';
 import { ShelfSection } from '../components/ShelfSection';
+import { Button } from '../components/ui/Button';
 
 export const Landing: React.FC = () => {
   const [hasEntered, setHasEntered] = useState<boolean>(false);
@@ -26,7 +27,7 @@ export const Landing: React.FC = () => {
   const featuredProducts = products.slice(0, 4);
 
   return (
-    <div className="w-full bg-black text-white">
+    <div className="w-full bg-transparent text-white">
       {/* 1. Locked Cinematic Entrance with Fixed Video & Photo */}
       {!hasEntered && (
         <CinematicEntrance onComplete={() => setHasEntered(true)} />
@@ -39,7 +40,7 @@ export const Landing: React.FC = () => {
       {/* 3. EDITORIAL HERO SECTION (Image 2)                      */}
       {/* Follows directly below the shelf as user scrolls down    */}
       {/* ======================================================== */}
-      <section id="store-hero-section" className="relative min-h-[85vh] flex flex-col justify-between p-6 sm:p-12 lg:p-16 border-b border-white/[0.08] bg-black overflow-hidden">
+      <section id="store-hero-section" className="relative min-h-[85vh] flex flex-col justify-between p-6 sm:p-12 lg:p-16 border-b border-white/[0.08] bg-transparent overflow-hidden">
         {/* Top Editorial Meta */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 z-10 font-mono text-xs text-neutral-400">
           <div className="flex items-center gap-2">
@@ -47,8 +48,8 @@ export const Landing: React.FC = () => {
             <span className="text-neutral-700">/</span>
             <span className="text-neutral-400">ORGANIC ARTISANAL PROVISIONS</span>
           </div>
-          <div className="flex items-center gap-3 text-neutral-400 text-[11px]">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 text-[11px] backdrop-blur-md shadow-[0_0_12px_rgba(16,185,129,0.2)]">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)] animate-pulse" />
             <span>LIVE STOCK SYNCHRONIZATION ACTIVE</span>
           </div>
         </div>
@@ -57,40 +58,44 @@ export const Landing: React.FC = () => {
         <div className="my-auto py-12 z-10 max-w-5xl">
           <h2 className="font-display font-black text-5xl sm:text-7xl lg:text-8xl tracking-tighter uppercase leading-[0.9] mb-8 text-white">
             CURATED <br />
-            <span className="text-neutral-500">ORGANIC</span> <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-neutral-400 via-neutral-200 to-neutral-500">ORGANIC</span> <br />
             RESERVE.
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-end pt-4">
-            <p className="text-neutral-400 text-sm sm:text-base leading-relaxed font-light">
+            <p className="text-neutral-300 text-sm sm:text-base leading-relaxed font-light">
               Sourced directly from certified organic family estates and regenerative cooperatives. Every single item in our digital aisles reflects real-time synchronized inventory so you never face out-of-stock cancellations.
             </p>
 
             <div className="flex flex-wrap items-center gap-4">
-              <Link
+              <Button
                 to="/shop"
-                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-white text-black hover:bg-neutral-200 font-mono text-xs font-semibold tracking-widest uppercase transition-all duration-200"
+                variant="primary"
+                size="lg"
+                icon={<ArrowRight className="w-4 h-4" />}
               >
-                <span>EXPLORE CATALOG</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
+                EXPLORE CATALOG
+              </Button>
 
-              <Link
+              <Button
                 to="/admin"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 border border-white/10 hover:border-white/30 bg-[#0c0c0e] text-neutral-300 hover:text-white font-mono text-xs tracking-widest uppercase transition-colors"
+                variant="secondary"
+                size="lg"
+                icon={<ArrowUpRight className="w-4 h-4 text-cyan-400" />}
               >
-                <span>ADMIN CONSOLE</span>
-                <ArrowUpRight className="w-4 h-4 text-neutral-400" />
-              </Link>
+                ADMIN CONSOLE
+              </Button>
 
-              <button
+              <Button
                 onClick={() => setHasEntered(false)}
-                className="inline-flex items-center justify-center gap-2 px-5 py-3.5 border border-white/10 hover:border-white/30 bg-black hover:bg-white/5 text-neutral-400 hover:text-white font-mono text-xs tracking-widest uppercase transition-colors cursor-pointer"
+                variant="dark"
+                size="md"
+                icon={<RotateCcw className="w-3.5 h-3.5" />}
+                iconPosition="left"
                 title="Replay entrance video"
               >
-                <RotateCcw className="w-3.5 h-3.5" />
-                <span>REPLAY ENTRANCE</span>
-              </button>
+                REPLAY
+              </Button>
             </div>
           </div>
         </div>
@@ -148,10 +153,10 @@ export const Landing: React.FC = () => {
       {/* ======================================================== */}
       {/* FEATURED PRODUCTS (Curated Essentials)                   */}
       {/* ======================================================== */}
-      <section className="py-20 px-4 sm:px-8 lg:px-12 border-b border-white/[0.08] bg-[#050505]">
+      <section className="py-20 px-4 sm:px-8 lg:px-12 border-b border-white/[0.08] bg-transparent">
         <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 gap-4">
           <div>
-            <span className="text-[10px] font-mono text-neutral-400 uppercase tracking-widest block mb-2">
+            <span className="text-[10px] font-mono text-cyan-400 uppercase tracking-widest block mb-2">
               DAILY HARVEST // CURATED SELECTIONS
             </span>
             <h2 className="font-display text-3xl sm:text-4xl font-extrabold uppercase tracking-tight text-white">
@@ -177,7 +182,7 @@ export const Landing: React.FC = () => {
       {/* ======================================================== */}
       {/* THE SMARTMART STANDARD (Editorial Quality Pillars)       */}
       {/* ======================================================== */}
-      <section className="py-24 px-4 sm:px-8 lg:px-12 border-b border-white/[0.08] bg-black">
+      <section className="py-24 px-4 sm:px-8 lg:px-12 border-b border-white/[0.08] bg-transparent">
         <div className="max-w-4xl mx-auto text-center mb-16">
           <span className="text-[10px] font-mono text-neutral-400 uppercase tracking-widest block mb-3">
             CULINARY-GRADE EXECUTION
@@ -191,8 +196,8 @@ export const Landing: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          <div className="p-8 bg-[#09090b] border border-white/[0.08] relative">
-            <span className="text-xs font-mono text-neutral-500 uppercase tracking-widest block mb-4">
+          <div className="p-8 rounded-2xl bg-[#09090e]/80 border border-white/10 hover:border-white/25 backdrop-blur-md relative transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(0,0,0,0.5)]">
+            <span className="text-xs font-mono text-cyan-400 uppercase tracking-widest block mb-4">
               01 // PROVENANCE
             </span>
             <h3 className="font-display font-bold text-lg uppercase text-white mb-2">
@@ -203,8 +208,8 @@ export const Landing: React.FC = () => {
             </p>
           </div>
 
-          <div className="p-8 bg-[#09090b] border border-white/[0.08] relative">
-            <span className="text-xs font-mono text-neutral-500 uppercase tracking-widest block mb-4">
+          <div className="p-8 rounded-2xl bg-[#09090e]/80 border border-white/10 hover:border-white/25 backdrop-blur-md relative transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(0,0,0,0.5)]">
+            <span className="text-xs font-mono text-emerald-400 uppercase tracking-widest block mb-4">
               02 // INVENTORY
             </span>
             <h3 className="font-display font-bold text-lg uppercase text-white mb-2">
@@ -215,8 +220,8 @@ export const Landing: React.FC = () => {
             </p>
           </div>
 
-          <div className="p-8 bg-[#09090b] border border-white/[0.08] relative">
-            <span className="text-xs font-mono text-neutral-500 uppercase tracking-widest block mb-4">
+          <div className="p-8 rounded-2xl bg-[#09090e]/80 border border-white/10 hover:border-white/25 backdrop-blur-md relative transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(0,0,0,0.5)]">
+            <span className="text-xs font-mono text-[#00A8FF] uppercase tracking-widest block mb-4">
               03 // FULFILLMENT
             </span>
             <h3 className="font-display font-bold text-lg uppercase text-white mb-2">
@@ -232,27 +237,31 @@ export const Landing: React.FC = () => {
       {/* ======================================================== */}
       {/* SHOPPING CTA BANNER                                     */}
       {/* ======================================================== */}
-      <section className="py-24 px-6 sm:px-12 text-center bg-[#070709] relative overflow-hidden">
+      <section className="py-24 px-6 sm:px-12 text-center bg-gradient-to-b from-[#070709] via-black to-[#050508] relative overflow-hidden">
         <div className="max-w-3xl mx-auto relative z-10">
           <h2 className="font-display font-extrabold text-4xl sm:text-6xl uppercase tracking-tighter text-white mb-6">
             ELEVATE YOUR DAILY TABLE
           </h2>
-          <p className="text-neutral-400 text-sm sm:text-base mb-8 max-w-xl mx-auto font-light">
+          <p className="text-neutral-400 text-sm sm:text-base mb-10 max-w-xl mx-auto font-light">
             Browse our full catalog of organic staples, single-origin roasts, and fresh bakery goods with real-time stock assurance.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4">
-            <Link
+            <Button
               to="/shop"
-              className="px-8 py-3.5 bg-white text-black hover:bg-neutral-200 font-mono font-semibold text-xs tracking-widest uppercase transition-all"
+              variant="primary"
+              size="lg"
+              icon={<ArrowRight className="w-4 h-4" />}
             >
               SHOP PRODUCTS NOW
-            </Link>
-            <Link
+            </Button>
+            <Button
               to="/admin"
-              className="px-8 py-3.5 border border-white/10 hover:border-white/30 bg-black text-neutral-300 hover:text-white font-mono text-xs tracking-widest uppercase transition-colors"
+              variant="secondary"
+              size="lg"
+              icon={<ArrowUpRight className="w-4 h-4 text-cyan-400" />}
             >
               VIEW ADMIN CONSOLE
-            </Link>
+            </Button>
           </div>
         </div>
       </section>

@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, ShieldCheck, Database, AlertOctagon, CheckCircle2, Loader2 } from 'lucide-react';
 import { CartItem } from '../types';
 import { mockStore } from '../services/mockStore';
+import { Button } from '../components/ui/Button';
 
 export const Checkout: React.FC = () => {
   const navigate = useNavigate();
@@ -73,16 +74,20 @@ export const Checkout: React.FC = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-black text-white py-12 px-4 sm:px-6 lg:px-8">
+    <div className="w-full min-h-screen bg-transparent text-white py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
         {/* Back Link */}
-        <Link
-          to="/cart"
-          className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-wider text-neutral-400 hover:text-white mb-8 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4 text-[#00A8FF]" />
-          RETURN TO BASKET
-        </Link>
+        <div className="mb-8">
+          <Button
+            to="/cart"
+            variant="ghost"
+            size="sm"
+            icon={<ArrowLeft className="w-4 h-4 text-cyan-400" />}
+            iconPosition="left"
+          >
+            RETURN TO BASKET
+          </Button>
+        </div>
 
         <div className="pb-6 mb-10 border-b border-neutral-900">
           <div className="flex items-center gap-2 text-xs font-mono text-[#00A8FF] uppercase tracking-widest mb-1">
@@ -257,24 +262,18 @@ export const Checkout: React.FC = () => {
                 </div>
               )}
 
-              {/* Action Button */}
-              <button
+              {/* Luxury Pill Action Button */}
+              <Button
                 type="submit"
                 disabled={isProcessing}
-                className="w-full py-4 bg-[#00A8FF] hover:bg-[#29C5FF] disabled:bg-neutral-800 disabled:text-neutral-500 text-black font-mono font-bold text-xs tracking-widest uppercase transition-all flex items-center justify-center gap-2"
+                isLoading={isProcessing}
+                variant="accent"
+                size="lg"
+                icon={!isProcessing ? <ShieldCheck className="w-4 h-4" /> : undefined}
+                className="w-full py-4 text-sm font-bold"
               >
-                {isProcessing ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    EXECUTING TRANSACTION...
-                  </>
-                ) : (
-                  <>
-                    <ShieldCheck className="w-4 h-4" />
-                    PLACE ORDER (${grandTotal.toFixed(2)})
-                  </>
-                )}
-              </button>
+                {isProcessing ? 'EXECUTING TRANSACTION...' : `PLACE ORDER ($${grandTotal.toFixed(2)})`}
+              </Button>
 
               <div className="flex items-center gap-2 text-[10px] font-mono text-neutral-400 justify-center">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />

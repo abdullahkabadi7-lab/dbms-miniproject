@@ -15,6 +15,7 @@ import { ProductWithInventory } from '../types';
 import { mockStore } from '../services/mockStore';
 import { StockBadge } from '../components/StockBadge';
 import { ProductCard } from '../components/ProductCard';
+import { Button } from '../components/ui/Button';
 
 export const ProductDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -85,7 +86,7 @@ export const ProductDetails: React.FC = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-black text-white py-12 px-4 sm:px-6 lg:px-8">
+    <div className="w-full min-h-screen bg-transparent text-white py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Navigation Breadcrumb */}
         <div className="flex items-center justify-between mb-8 pb-4 border-b border-neutral-900">
@@ -179,55 +180,54 @@ export const ProductDetails: React.FC = () => {
               {/* Quantity Controls & Add To Cart Button */}
               <div className="space-y-4 mb-10">
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-                  {/* Quantity Stepper */}
-                  <div className="flex items-center border border-neutral-800 bg-[#0A0A0A] h-12">
+                  {/* Modern Ergonomic Quantity Pill Capsule */}
+                  <div className="flex items-center justify-between rounded-full border border-white/15 bg-white/[0.04] backdrop-blur-md h-12 px-3 shadow-inner sm:w-44">
                     <button
                       onClick={handleDecrement}
                       disabled={isOutOfStock || quantity <= 1}
-                      className="w-12 h-full flex items-center justify-center text-neutral-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                      className="w-8 h-8 rounded-full flex items-center justify-center text-neutral-300 hover:text-white hover:bg-white/10 disabled:opacity-30 disabled:hover:bg-transparent disabled:cursor-not-allowed transition-all cursor-pointer"
                       aria-label="Decrease quantity"
                     >
                       <Minus className="w-4 h-4" />
                     </button>
-                    <span className="w-14 text-center font-mono text-base font-bold text-white">
+                    <span className="font-mono text-base font-bold text-white">
                       {quantity}
                     </span>
                     <button
                       onClick={handleIncrement}
                       disabled={isOutOfStock || quantity >= maxStock}
-                      className="w-12 h-full flex items-center justify-center text-neutral-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                      className="w-8 h-8 rounded-full flex items-center justify-center text-neutral-300 hover:text-white hover:bg-white/10 disabled:opacity-30 disabled:hover:bg-transparent disabled:cursor-not-allowed transition-all cursor-pointer"
                       aria-label="Increase quantity"
                     >
                       <Plus className="w-4 h-4" />
                     </button>
                   </div>
 
-                  {/* Add to Cart CTA */}
-                  <button
-                    onClick={handleAddToCart}
-                    disabled={isOutOfStock}
-                    className={`flex-1 h-12 flex items-center justify-center gap-2 px-8 text-xs font-mono font-bold tracking-widest uppercase transition-all duration-200 ${
-                      isOutOfStock
-                        ? 'bg-neutral-900 text-neutral-400 border border-neutral-800 cursor-not-allowed'
-                        : added
-                        ? 'bg-emerald-500 text-black'
-                        : 'bg-[#00A8FF] text-black hover:bg-[#29C5FF] active:scale-95'
-                    }`}
-                  >
-                    {added ? (
-                      <>
-                        <Check className="w-4 h-4 stroke-[2.5]" />
-                        ADDED TO CART
-                      </>
-                    ) : isOutOfStock ? (
-                      'CURRENTLY OUT OF STOCK'
-                    ) : (
-                      <>
-                        <ShoppingCart className="w-4 h-4" />
-                        ADD TO CART (${(product.selling_price * quantity).toFixed(2)})
-                      </>
-                    )}
-                  </button>
+                  {/* Add to Cart Luxury Pill Button */}
+                  <div className="flex-1">
+                    <Button
+                      onClick={handleAddToCart}
+                      disabled={isOutOfStock}
+                      size="lg"
+                      variant={added ? 'accent' : isOutOfStock ? 'dark' : 'accent'}
+                      icon={
+                        added ? (
+                          <Check className="w-4 h-4 stroke-[2.5]" />
+                        ) : isOutOfStock ? undefined : (
+                          <ShoppingCart className="w-4 h-4" />
+                        )
+                      }
+                      className={`w-full h-12 ${added ? 'bg-emerald-400 text-black border-emerald-300' : ''}`}
+                    >
+                      {added ? (
+                        'ADDED TO CART'
+                      ) : isOutOfStock ? (
+                        'CURRENTLY OUT OF STOCK'
+                      ) : (
+                        `ADD TO CART ($${(product.selling_price * quantity).toFixed(2)})`
+                      )}
+                    </Button>
+                  </div>
                 </div>
 
                 {product.stock_status === 'LOW_STOCK' && (

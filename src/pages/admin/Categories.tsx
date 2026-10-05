@@ -3,6 +3,7 @@ import { Plus, Edit2, Trash2, FolderTree, ExternalLink } from 'lucide-react';
 import { Category } from '../../types';
 import { mockStore } from '../../services/mockStore';
 import { Modal } from '../../components/Modal';
+import { Button } from '../../components/ui/Button';
 
 export const Categories: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -91,13 +92,15 @@ export const Categories: React.FC = () => {
           </h1>
         </div>
 
-        <button
+        <Button
           onClick={openCreateModal}
-          className="px-5 py-2.5 bg-[#00A8FF] hover:bg-[#29C5FF] text-black font-mono font-bold text-xs tracking-wider uppercase transition-colors flex items-center gap-2"
+          variant="accent"
+          size="sm"
+          icon={<Plus className="w-4 h-4" />}
+          iconPosition="left"
         >
-          <Plus className="w-4 h-4" />
           NEW CATEGORY
-        </button>
+        </Button>
       </div>
 
       {/* Categories Grid/Table */}
@@ -222,19 +225,21 @@ export const Categories: React.FC = () => {
             </div>
 
             <div className="pt-4 border-t border-neutral-900 flex items-center justify-end gap-3">
-              <button
+              <Button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="px-4 py-2 border border-neutral-800 text-neutral-400 hover:text-white text-xs font-mono uppercase"
+                variant="ghost"
+                size="sm"
               >
                 CANCEL
-              </button>
-              <button
+              </Button>
+              <Button
                 type="submit"
-                className="px-6 py-2 bg-[#00A8FF] text-black font-mono font-bold text-xs uppercase hover:bg-[#29C5FF]"
+                variant="accent"
+                size="sm"
               >
                 {editingCategory ? 'SAVE CHANGES' : 'CREATE CATEGORY'}
-              </button>
+              </Button>
             </div>
           </form>
         </Modal>

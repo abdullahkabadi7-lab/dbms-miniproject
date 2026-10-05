@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { mockStore } from '../services/mockStore';
 import { User } from '../types';
+import { Button } from './ui/Button';
 
 export const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -57,15 +58,19 @@ export const Navbar: React.FC = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 w-full bg-black/75 backdrop-blur-md border-b border-white/[0.08] transition-all duration-300">
+    <header className="fixed top-0 left-0 right-0 z-40 w-full bg-black/70 backdrop-blur-xl border-b border-white/10 transition-all duration-300">
+      {/* Top Edge Specular Reflection */}
+      <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Left: Brand Logo */}
         <div className="flex items-center gap-8">
           <Link to="/" className="group flex items-center gap-2">
-            <span className="font-display font-extrabold text-2xl tracking-tighter text-white">
-              SMART<span className="text-neutral-400 group-hover:text-white transition-colors">MART</span>
+            <span className="font-display font-black text-2xl tracking-tight uppercase">
+              <span className="text-white group-hover:text-neutral-200 transition-colors">SMART</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00A8FF] to-[#29C5FF] drop-shadow-[0_0_12px_rgba(0,168,255,0.6)]">MART</span>
             </span>
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mb-2"></span>
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.9)] mb-2 animate-pulse"></span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -76,13 +81,13 @@ export const Navbar: React.FC = () => {
                 <Link
                   key={link.path}
                   to={link.path}
-                  className={`text-xs font-mono tracking-widest uppercase transition-colors relative py-1 ${
-                    isActive ? 'text-white font-semibold' : 'text-neutral-400 hover:text-white'
+                  className={`text-xs font-mono tracking-widest uppercase transition-all duration-200 relative py-1 ${
+                    isActive ? 'text-white font-bold' : 'text-neutral-400 hover:text-white'
                   }`}
                 >
                   {link.label}
                   {isActive && (
-                    <span className="absolute bottom-0 left-0 w-full h-[1.5px] bg-white" />
+                    <span className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-[#00A8FF] to-[#29C5FF] shadow-[0_0_8px_rgba(0,168,255,0.8)] rounded-full" />
                   )}
                 </Link>
               );
@@ -91,40 +96,44 @@ export const Navbar: React.FC = () => {
         </div>
 
         {/* Right: Actions */}
-        <div className="flex items-center gap-3 sm:gap-5">
+        <div className="flex items-center gap-3 sm:gap-4">
           {/* Search trigger */}
           <Link
             to="/shop"
-            className="p-2 text-neutral-400 hover:text-white transition-colors"
+            className="p-2.5 rounded-full text-neutral-400 hover:text-white hover:bg-white/10 transition-all"
             title="Search Products"
             aria-label="Search Products"
           >
             <Search className="w-4 h-4" />
           </Link>
 
-          {/* Cart Icon with Live Badge */}
+          {/* Cart Icon with Live Glowing Badge */}
           <Link
             to="/cart"
-            className="relative p-2 text-neutral-400 hover:text-white transition-colors"
+            className="relative p-2.5 rounded-full text-neutral-400 hover:text-white hover:bg-white/10 transition-all"
             title="View Shopping Cart"
             aria-label="Shopping Cart"
           >
             <ShoppingCart className="w-4 h-4" />
             {cartCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 bg-white text-black font-mono font-bold text-[10px] w-4 h-4 rounded-full flex items-center justify-center animate-in zoom-in">
+              <span className="absolute -top-0.5 -right-0.5 bg-gradient-to-r from-[#00A8FF] to-[#29C5FF] text-black font-mono font-bold text-[10px] w-4 h-4 rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(0,168,255,0.8)] animate-in zoom-in">
                 {cartCount}
               </span>
             )}
           </Link>
 
-          {/* Admin Portal Shortcut */}
-          <Link
-            to="/admin"
-            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono uppercase tracking-wider border border-white/10 hover:border-white/30 text-neutral-300 hover:text-white transition-all bg-[#0c0c0e]"
-          >
-            <ShieldCheck className="w-3.5 h-3.5 text-neutral-400" />
-            ADMIN PORTAL
-          </Link>
+          {/* Admin Portal Shortcut Pill Button */}
+          <div className="hidden sm:block">
+            <Button
+              to="/admin"
+              variant="secondary"
+              size="sm"
+              icon={<ShieldCheck className="w-3.5 h-3.5 text-cyan-400" />}
+              iconPosition="left"
+            >
+              ADMIN PORTAL
+            </Button>
+          </div>
 
           {/* User Profile / Auth */}
           <div className="hidden sm:flex items-center gap-2 pl-2 border-l border-white/10">
@@ -132,15 +141,15 @@ export const Navbar: React.FC = () => {
               <div className="flex items-center gap-2">
                 <Link
                   to="/orders"
-                  className="flex items-center gap-1.5 text-xs font-mono text-neutral-400 hover:text-white"
+                  className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-xs font-mono text-neutral-300 hover:text-white transition-all"
                   title="View Profile and Orders"
                 >
-                  <UserCheck className="w-3.5 h-3.5 text-neutral-400" />
+                  <UserCheck className="w-3.5 h-3.5 text-cyan-400" />
                   <span className="max-w-[100px] truncate">{currentUser.full_name}</span>
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="text-neutral-400 hover:text-red-400 p-1 transition-colors cursor-pointer"
+                  className="text-neutral-400 hover:text-red-400 p-1.5 rounded-full hover:bg-white/5 transition-colors cursor-pointer"
                   title="Log out"
                   aria-label="Log out"
                 >
@@ -148,13 +157,9 @@ export const Navbar: React.FC = () => {
                 </button>
               </div>
             ) : (
-              <Link
-                to="/login"
-                className="flex items-center gap-1.5 text-xs font-mono text-neutral-300 hover:text-white"
-              >
-                <LogIn className="w-3.5 h-3.5" />
+              <Button to="/login" variant="ghost" size="sm" icon={<LogIn className="w-3.5 h-3.5" />} iconPosition="left">
                 LOGIN
-              </Link>
+              </Button>
             )}
           </div>
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { ArrowDown, ArrowRight } from 'lucide-react';
+import { Button } from '../ui/Button';
 
 interface CinematicEntranceProps {
   onComplete: () => void;
@@ -238,13 +239,14 @@ export const CinematicEntrance: React.FC<CinematicEntranceProps> = ({ onComplete
           </div>
 
           <div className="flex items-center gap-3 pointer-events-auto">
-            <button
+            <Button
               onClick={handleEnterStore}
-              className="group flex items-center gap-2 px-4 py-2 bg-black/60 hover:bg-white text-white hover:text-black font-mono text-xs uppercase tracking-widest border border-white/20 hover:border-white backdrop-blur-md transition-all duration-200 cursor-pointer"
+              variant="secondary"
+              size="sm"
+              icon={<ArrowRight className="w-3.5 h-3.5" />}
             >
-              <span>SKIP ENTRANCE</span>
-              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
-            </button>
+              SKIP ENTRANCE
+            </Button>
           </div>
         </div>
 

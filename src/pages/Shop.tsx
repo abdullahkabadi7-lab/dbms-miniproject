@@ -73,7 +73,7 @@ export const Shop: React.FC = () => {
   }, [products, selectedCategory, stockFilter, searchQuery, sortBy]);
 
   return (
-    <div className="w-full min-h-screen bg-black text-white py-12 px-4 sm:px-6 lg:px-8">
+    <div className="w-full min-h-screen bg-transparent text-white py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Page Header */}
         <div className="mb-10 pb-8 border-b border-white/[0.08]">
@@ -100,16 +100,16 @@ export const Shop: React.FC = () => {
           />
 
           <div className="flex flex-wrap items-center gap-3">
-            {/* Stock State Filter */}
-            <div className="flex items-center bg-[#09090b] border border-white/10 text-xs font-mono">
-              <span className="px-3 text-neutral-400 border-r border-white/10 flex items-center gap-1.5">
-                <SlidersHorizontal className="w-3.5 h-3.5 text-neutral-300" />
+            {/* Stock State Filter Pill */}
+            <div className="flex items-center rounded-full bg-white/[0.04] border border-white/15 backdrop-blur-md text-xs font-mono px-3 py-1 shadow-sm">
+              <span className="pr-2 text-neutral-400 border-r border-white/10 flex items-center gap-1.5">
+                <SlidersHorizontal className="w-3.5 h-3.5 text-cyan-400" />
                 STOCK:
               </span>
               <select
                 value={stockFilter}
                 onChange={(e) => setStockFilter(e.target.value)}
-                className="bg-transparent text-white px-3 py-2.5 focus:outline-none cursor-pointer"
+                className="bg-transparent text-white px-2 py-1.5 focus:outline-none cursor-pointer"
               >
                 <option value="all" className="bg-[#09090b] text-white">All Items</option>
                 <option value="IN_STOCK" className="bg-[#09090b] text-emerald-400">In Stock Only</option>
@@ -118,15 +118,15 @@ export const Shop: React.FC = () => {
               </select>
             </div>
 
-            {/* Sort Filter */}
-            <div className="flex items-center bg-[#09090b] border border-white/10 text-xs font-mono">
-              <span className="px-3 text-neutral-400 border-r border-white/10">
+            {/* Sort Filter Pill */}
+            <div className="flex items-center rounded-full bg-white/[0.04] border border-white/15 backdrop-blur-md text-xs font-mono px-3 py-1 shadow-sm">
+              <span className="pr-2 text-neutral-400 border-r border-white/10">
                 SORT:
               </span>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="bg-transparent text-white px-3 py-2.5 focus:outline-none cursor-pointer"
+                className="bg-transparent text-white px-2 py-1.5 focus:outline-none cursor-pointer"
               >
                 <option value="featured" className="bg-[#09090b] text-white">Default / Featured</option>
                 <option value="price-asc" className="bg-[#09090b] text-white">Price: Low to High</option>
@@ -138,13 +138,13 @@ export const Shop: React.FC = () => {
         </div>
 
         {/* Category Filter Pills / Tabs */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-8 border-b border-white/[0.08] scrollbar-none">
+        <div className="flex items-center gap-2.5 overflow-x-auto pb-4 mb-8 border-b border-white/[0.08] scrollbar-none">
           <button
             onClick={() => handleCategoryChange('all')}
-            className={`px-4 py-2 text-xs font-mono uppercase tracking-wider whitespace-nowrap transition-colors border cursor-pointer ${
+            className={`px-5 py-2 text-xs font-mono uppercase tracking-wider whitespace-nowrap rounded-full transition-all duration-300 cursor-pointer active:scale-95 ${
               selectedCategory === 'all'
-                ? 'bg-white text-black border-white font-bold'
-                : 'bg-[#09090b] text-neutral-400 border-white/10 hover:text-white hover:border-white/20'
+                ? 'bg-white text-black font-bold shadow-[0_0_20px_rgba(255,255,255,0.35)] scale-105'
+                : 'bg-white/[0.04] text-neutral-400 border border-white/10 hover:text-white hover:bg-white/[0.08] hover:border-white/25'
             }`}
           >
             All Aisles ({products.length})
@@ -153,10 +153,10 @@ export const Shop: React.FC = () => {
             <button
               key={cat.category_id}
               onClick={() => handleCategoryChange(cat.category_id)}
-              className={`px-4 py-2 text-xs font-mono uppercase tracking-wider whitespace-nowrap transition-colors border cursor-pointer ${
+              className={`px-5 py-2 text-xs font-mono uppercase tracking-wider whitespace-nowrap rounded-full transition-all duration-300 cursor-pointer active:scale-95 ${
                 selectedCategory === cat.category_id
-                  ? 'bg-white text-black border-white font-bold'
-                  : 'bg-[#09090b] text-neutral-400 border-white/10 hover:text-white hover:border-white/20'
+                  ? 'bg-gradient-to-r from-[#00A8FF] to-[#29C5FF] text-black font-bold shadow-[0_0_20px_rgba(0,168,255,0.45)] scale-105'
+                  : 'bg-white/[0.04] text-neutral-400 border border-white/10 hover:text-white hover:bg-white/[0.08] hover:border-white/25'
               }`}
             >
               {cat.name} ({cat.product_count ?? 0})
