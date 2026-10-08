@@ -1,75 +1,102 @@
 import { mockStore } from './mockStore';
+import { apiClient } from './apiClient';
 import { ProductWithInventory, Category, Supplier, Product } from '../types';
 
 export const productService = {
-  getProducts(): Promise<ProductWithInventory[]> {
-    return Promise.resolve(mockStore.getProductsWithInventory());
+  async getProducts(): Promise<ProductWithInventory[]> {
+    try {
+      const res = await apiClient.get<{ success: boolean; products: ProductWithInventory[] }>('/products');
+      if (res.success && res.products) {
+        return res.products;
+      }
+    } catch {
+      // Backend not running, fallback to store
+    }
+    return mockStore.getProductsWithInventory();
   },
 
-  getProductById(id: string): Promise<ProductWithInventory | undefined> {
-    return Promise.resolve(mockStore.getProductById(id));
+  async getProductById(id: string | number): Promise<ProductWithInventory | undefined> {
+    try {
+      const res = await apiClient.get<{ success: boolean; product: ProductWithInventory }>(`/products/${id}`);
+      if (res.success && res.product) {
+        return res.product;
+      }
+    } catch {
+      // Backend not running, fallback to store
+    }
+    return mockStore.getProductById(id);
   },
 
-  getCategories(): Promise<Category[]> {
-    return Promise.resolve(mockStore.getCategories());
+  async getCategories(): Promise<Category[]> {
+    try {
+      const res = await apiClient.get<{ success: boolean; categories: Category[] }>('/categories');
+      if (res.success && res.categories) {
+        return res.categories;
+      }
+    } catch {
+      // Backend not running, fallback to store
+    }
+    return mockStore.getCategories();
   },
 
-  getSuppliers(): Promise<Supplier[]> {
-    return Promise.resolve(mockStore.getSuppliers());
+  async getSuppliers(): Promise<Supplier[]> {
+    try {
+      const res = await apiClient.get<{ success: boolean; suppliers: Supplier[] }>('/suppliers');
+      if (res.success && res.suppliers) {
+        return res.suppliers;
+      }
+    } catch {
+      // Backend not running, fallback to store
+    }
+    return mockStore.getSuppliers();
   },
 
-  addProduct(data: {
+  async addProduct(data: {
     name: string;
     sku: string;
     description: string;
-    category_id: string;
-    supplier_id: string;
+    category_id: string | number;
+    supplier_id: string | number;
     selling_price: number;
     cost_price: number;
     image_url: string;
     initial_stock: number;
     reorder_level: number;
   }): Promise<ProductWithInventory> {
-    return Promise.resolve(mockStore.addProduct(data));
+    return mockStore.addProduct(data);
   },
 
-  updateProduct(id: string, data: Partial<Product>): Promise<void> {
+  async updateProduct(id: string | number, data: Partial<Product>): Promise<void> {
     mockStore.updateProduct(id, data);
-    return Promise.resolve();
   },
 
-  deleteProduct(id: string): Promise<void> {
+  async deleteProduct(id: string | number): Promise<void> {
     mockStore.deleteProduct(id);
-    return Promise.resolve();
   },
 
   // Category CRUD
-  addCategory(data: { name: string; slug: string; description: string; image_url?: string }): Promise<Category> {
-    return Promise.resolve(mockStore.addCategory(data));
+  async addCategory(data: { name: string; slug: string; description: string; image_url?: string }): Promise<Category> {
+    return mockStore.addCategory(data);
   },
 
-  updateCategory(id: string, data: Partial<Category>): Promise<void> {
+  async updateCategory(id: string | number, data: Partial<Category>): Promise<void> {
     mockStore.updateCategory(id, data);
-    return Promise.resolve();
   },
 
-  deleteCategory(id: string): Promise<void> {
+  async deleteCategory(id: string | number): Promise<void> {
     mockStore.deleteCategory(id);
-    return Promise.resolve();
   },
 
   // Supplier CRUD
-  addSupplier(data: Omit<Supplier, 'supplier_id' | 'created_at'>): Promise<Supplier> {
-    return Promise.resolve(mockStore.addSupplier(data));
+  async addSupplier(data: Omit<Supplier, 'supplier_id' | 'created_at'>): Promise<Supplier> {
+    return mockStore.addSupplier(data);
   },
 
-  updateSupplier(id: string, data: Partial<Supplier>): Promise<void> {
+  async updateSupplier(id: string | number, data: Partial<Supplier>): Promise<void> {
     mockStore.updateSupplier(id, data);
-    return Promise.resolve();
   },
 
-  deleteSupplier(id: string): Promise<void> {
+  async deleteSupplier(id: string | number): Promise<void> {
     mockStore.deleteSupplier(id);
-    return Promise.resolve();
   }
 };

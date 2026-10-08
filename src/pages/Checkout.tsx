@@ -56,7 +56,7 @@ export const Checkout: React.FC = () => {
     await new Promise((r) => setTimeout(r, 600));
 
     // Call actual mockStore atomic transaction
-    const result = mockStore.placeOrder(formData);
+    const result = await mockStore.placeOrder(formData);
 
     if (!result.success) {
       setIsProcessing(false);

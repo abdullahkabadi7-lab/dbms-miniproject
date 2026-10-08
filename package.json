@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "backend": "node backend/server.js",
+    "init-db": "node backend/setupDb.js",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview"

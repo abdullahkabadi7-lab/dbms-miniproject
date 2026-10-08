@@ -18,6 +18,7 @@ export interface User {
 export interface Category {
   category_id: string;
   name: string;
+  category_name?: string;
   slug: string;
   description: string;
   image_url: string;
@@ -39,12 +40,14 @@ export type StockStatus = 'IN_STOCK' | 'LOW_STOCK' | 'OUT_OF_STOCK';
 export interface Product {
   product_id: string;
   name: string;
+  product_name?: string;
   sku: string;
   description: string;
   category_id: string;
   supplier_id: string;
   selling_price: number;
   cost_price: number;
+  unit?: string;
   image_url: string;
   created_at: string;
 }
@@ -95,7 +98,7 @@ export interface Order {
   items?: OrderItem[];
 }
 
-export type TransactionType = 'SALE' | 'RESTOCK' | 'RETURN';
+export type TransactionType = 'SALE' | 'RESTOCK' | 'RETURN' | 'STOCK_IN' | 'STOCK_OUT';
 
 export interface StockTransaction {
   transaction_id: string;

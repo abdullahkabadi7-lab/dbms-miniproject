@@ -20,6 +20,7 @@ import {
   INITIAL_TRANSACTIONS,
   DEMO_USERS
 } from '../data/mockData';
+import { apiClient } from './apiClient';
 
 const STORAGE_KEYS = {
   CATEGORIES: 'smartmart_categories',
@@ -45,9 +46,11 @@ class MockStore {
   private cart: CartItem[] = [];
   private currentUser: User = DEMO_USERS[1]; // Alex Morgan (customer) by default
   private listeners: Set<Listener> = new Set();
+  private backendSynced = false;
 
   constructor() {
     this.loadFromStorage();
+    this.syncWithBackend();
   }
 
   private loadFromStorage() {
@@ -112,15 +115,109 @@ class MockStore {
     this.listeners.forEach(fn => fn());
   }
 
+  // --- Real PostgreSQL Backend Synchronization ---
+  public async syncWithBackend(): Promise<void> {
+    try {
+      const isOnline = await apiClient.isBackendHealthy();
+      if (!isOnline) {
+        return;
+      }
+
+      const [prodRes, catRes, supRes, ordRes, txRes] = await Promise.all([
+        apiClient.get<{ success: boolean; products: ProductWithInventory[] }>('/products').catch(() => null),
+        apiClient.get<{ success: boolean; categories: Category[] }>('/categories').catch(() => null),
+        apiClient.get<{ success: boolean; suppliers: Supplier[] }>('/suppliers').catch(() => null),
+        apiClient.get<{ success: boolean; orders: Order[] }>('/orders').catch(() => null),
+        apiClient.get<{ success: boolean; transactions: StockTransaction[] }>('/transactions').catch(() => null)
+      ]);
+
+      let changed = false;
+
+      if (prodRes?.success && Array.isArray(prodRes.products) && prodRes.products.length > 0) {
+        this.products = prodRes.products.map((p: any) => ({
+          ...p,
+          product_id: String(p.product_id),
+          category_id: String(p.category_id),
+          supplier_id: String(p.supplier_id),
+          sku: p.sku || `SKU-${p.product_id}`,
+          name: p.product_name || p.name,
+          image_url: p.image_url || ''
+        }));
+
+        this.inventory = prodRes.products.map((p: any) => ({
+          inventory_id: `inv-${p.product_id}`,
+          product_id: String(p.product_id),
+          current_stock: p.current_stock ?? 0,
+          reorder_level: p.reorder_level ?? 5,
+          status: p.stock_status || 'IN_STOCK',
+          last_updated: new Date().toISOString()
+        }));
+        changed = true;
+      }
+
+      if (catRes?.success && Array.isArray(catRes.categories) && catRes.categories.length > 0) {
+        this.categories = catRes.categories.map((c: any) => ({
+          ...c,
+          category_id: String(c.category_id),
+          name: c.category_name || c.name,
+          slug: c.slug || (c.category_name || c.name).toLowerCase().replace(/\s+/g, '-'),
+          image_url: c.image_url || ''
+        }));
+        changed = true;
+      }
+
+      if (supRes?.success && Array.isArray(supRes.suppliers) && supRes.suppliers.length > 0) {
+        this.suppliers = supRes.suppliers.map((s: any) => ({
+          ...s,
+          supplier_id: String(s.supplier_id)
+        }));
+        changed = true;
+      }
+
+      if (ordRes?.success && Array.isArray(ordRes.orders)) {
+        this.orders = ordRes.orders.map((o: any) => ({
+          ...o,
+          order_id: String(o.order_id),
+          customer_id: String(o.customer_id || o.user_id),
+          customer_name: o.customer_name || 'Customer',
+          customer_email: o.customer_email || '',
+          customer_phone: o.customer_phone || '',
+          tax: o.tax ?? +(Number(o.total || o.total_amount || 0) * 0.08).toFixed(2),
+          shipping_fee: o.shipping_fee ?? 0,
+          total: parseFloat(String(o.total || o.total_amount || 0))
+        }));
+        changed = true;
+      }
+
+      if (txRes?.success && Array.isArray(txRes.transactions)) {
+        this.transactions = txRes.transactions.map((t: any) => ({
+          ...t,
+          transaction_id: String(t.transaction_id),
+          product_id: String(t.product_id),
+          product_name: t.product_name || t.name || 'Product',
+          transaction_date: t.transaction_date || t.created_at || new Date().toISOString()
+        }));
+        changed = true;
+      }
+
+      this.backendSynced = true;
+      if (changed) {
+        this.persist();
+      }
+    } catch (err) {
+      console.warn('Backend sync error:', err);
+    }
+  }
+
   // --- Products & Inventory Queries ---
 
   public getProductsWithInventory(): ProductWithInventory[] {
-    const categoryMap = new Map(this.categories.map(c => [c.category_id, c.name]));
-    const supplierMap = new Map(this.suppliers.map(s => [s.supplier_id, s.supplier_name]));
-    const invMap = new Map(this.inventory.map(i => [i.product_id, i]));
+    const categoryMap = new Map(this.categories.map(c => [String(c.category_id), c.name]));
+    const supplierMap = new Map(this.suppliers.map(s => [String(s.supplier_id), s.supplier_name]));
+    const invMap = new Map(this.inventory.map(i => [String(i.product_id), i]));
 
     return this.products.map(p => {
-      const inv = invMap.get(p.product_id);
+      const inv = invMap.get(String(p.product_id));
       const stock = inv ? inv.current_stock : 0;
       const reorder = inv ? inv.reorder_level : 5;
       const status = stock === 0 ? 'OUT_OF_STOCK' : stock <= reorder ? 'LOW_STOCK' : 'IN_STOCK';
@@ -130,20 +227,21 @@ class MockStore {
         current_stock: stock,
         reorder_level: reorder,
         stock_status: status,
-        category_name: categoryMap.get(p.category_id) || 'Uncategorized',
-        supplier_name: supplierMap.get(p.supplier_id) || 'Unknown Supplier'
+        category_name: categoryMap.get(String(p.category_id)) || 'Uncategorized',
+        supplier_name: supplierMap.get(String(p.supplier_id)) || 'Unknown Supplier'
       };
     });
   }
 
-  public getProductById(productId: string): ProductWithInventory | undefined {
-    return this.getProductsWithInventory().find(p => p.product_id === productId);
+  public getProductById(productId: string | number): ProductWithInventory | undefined {
+    const sId = String(productId);
+    return this.getProductsWithInventory().find(p => String(p.product_id) === sId);
   }
 
   public getCategories(): Category[] {
     return this.categories.map(cat => ({
       ...cat,
-      product_count: this.products.filter(p => p.category_id === cat.category_id).length
+      product_count: this.products.filter(p => String(p.category_id) === String(cat.category_id)).length
     }));
   }
 
@@ -159,14 +257,15 @@ class MockStore {
     return [...this.orders].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
   }
 
-  public getOrderById(orderId: string): Order | undefined {
-    return this.orders.find(o => o.order_id === orderId);
+  public getOrderById(orderId: string | number): Order | undefined {
+    const sId = String(orderId);
+    return this.orders.find(o => String(o.order_id) === sId);
   }
 
-  public getCustomerOrders(customerId?: string): Order[] {
-    const targetId = customerId || this.currentUser.user_id;
+  public getCustomerOrders(customerId?: string | number): Order[] {
+    const targetId = customerId ? String(customerId) : String(this.currentUser.user_id);
     return this.orders
-      .filter(o => o.customer_id === targetId || o.customer_email === this.currentUser.email)
+      .filter(o => String(o.customer_id) === targetId || o.customer_email === this.currentUser.email)
       .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
   }
 
@@ -177,13 +276,12 @@ class MockStore {
   // --- Cart Management ---
 
   public getCart(): CartItem[] {
-    // Re-sync cart items with live product & inventory data
     const allProducts = this.getProductsWithInventory();
-    const prodMap = new Map(allProducts.map(p => [p.product_id, p]));
+    const prodMap = new Map(allProducts.map(p => [String(p.product_id), p]));
 
     return this.cart
       .map(item => {
-        const live = prodMap.get(item.product.product_id);
+        const live = prodMap.get(String(item.product.product_id));
         if (!live) return null;
         return {
           product: live,
@@ -193,12 +291,13 @@ class MockStore {
       .filter((item): item is CartItem => item !== null);
   }
 
-  public addToCart(productId: string, quantity = 1): { success: boolean; message?: string } {
+  public addToCart(productId: string | number, quantity = 1): { success: boolean; message?: string } {
     const prod = this.getProductById(productId);
     if (!prod) return { success: false, message: 'Product not found' };
     if (prod.current_stock <= 0) return { success: false, message: 'Product is currently out of stock' };
 
-    const existingIndex = this.cart.findIndex(i => i.product.product_id === productId);
+    const sId = String(productId);
+    const existingIndex = this.cart.findIndex(i => String(i.product.product_id) === sId);
     if (existingIndex > -1) {
       const currentQty = this.cart[existingIndex].quantity;
       if (currentQty + quantity > prod.current_stock) {
@@ -216,24 +315,26 @@ class MockStore {
     return { success: true };
   }
 
-  public updateCartQuantity(productId: string, quantity: number) {
+  public updateCartQuantity(productId: string | number, quantity: number) {
+    const sId = String(productId);
     if (quantity <= 0) {
-      this.removeFromCart(productId);
+      this.removeFromCart(sId);
       return;
     }
-    const prod = this.getProductById(productId);
+    const prod = this.getProductById(sId);
     if (!prod) return;
 
     const targetQty = Math.min(quantity, prod.current_stock);
-    const existing = this.cart.find(i => i.product.product_id === productId);
+    const existing = this.cart.find(i => String(i.product.product_id) === sId);
     if (existing) {
       existing.quantity = targetQty;
       this.persist();
     }
   }
 
-  public removeFromCart(productId: string) {
-    this.cart = this.cart.filter(i => i.product.product_id !== productId);
+  public removeFromCart(productId: string | number) {
+    const sId = String(productId);
+    this.cart = this.cart.filter(i => String(i.product.product_id) !== sId);
     this.persist();
   }
 
@@ -242,31 +343,55 @@ class MockStore {
     this.persist();
   }
 
-  // --- Real Transactional Order Placement ---
-  // Mirrors PostgreSQL ACID Transaction:
-  // BEGIN;
-  // SELECT current_stock FROM inventory WHERE product_id = ... FOR UPDATE;
-  // Check stock >= requested;
-  // UPDATE inventory SET current_stock = current_stock - quantity;
-  // INSERT INTO orders ...;
-  // INSERT INTO order_items ...;
-  // INSERT INTO stock_transactions ...;
-  // COMMIT;
-
-  public placeOrder(customerData: {
+  // --- Transactional Order Placement (PostgreSQL ACID Transaction) ---
+  public async placeOrder(customerData: {
     fullName: string;
     email: string;
     phone: string;
     shippingAddress: string;
-  }): { success: boolean; order?: Order; error?: string } {
+  }): Promise<{ success: boolean; order?: Order; error?: string }> {
     const cartItems = this.getCart();
     if (cartItems.length === 0) {
       return { success: false, error: 'Cannot checkout with an empty cart.' };
     }
 
-    // Step 1: Stock verification check
+    // Attempt direct ACID transaction via PostgreSQL Backend API
+    try {
+      const payload = {
+        userId: this.currentUser.user_id,
+        user_id: this.currentUser.user_id,
+        fullName: customerData.fullName,
+        email: customerData.email,
+        phone: customerData.phone,
+        shipping_address: customerData.shippingAddress,
+        shippingAddress: customerData.shippingAddress,
+        items: cartItems.map(item => ({
+          product_id: item.product.product_id,
+          quantity: item.quantity
+        }))
+      };
+
+      const res = await apiClient.post<{ success: boolean; order?: Order; error?: string }>('/orders', payload);
+      if (res.success && res.order) {
+        this.cart = [];
+        this.orders.unshift(res.order);
+        await this.syncWithBackend();
+        this.persist();
+        return { success: true, order: res.order };
+      } else if (res.error) {
+        return { success: false, error: res.error };
+      }
+    } catch (err: unknown) {
+      const errorObj = err as { message?: string };
+      if (errorObj?.message && errorObj.message.includes('Rolled Back')) {
+        return { success: false, error: errorObj.message };
+      }
+      console.warn('Backend order transaction unreachable, executing local ACID fallback:', err);
+    }
+
+    // Local atomic fallback
     for (const item of cartItems) {
-      const inv = this.inventory.find(i => i.product_id === item.product.product_id);
+      const inv = this.inventory.find(i => String(i.product_id) === String(item.product.product_id));
       if (!inv || inv.current_stock < item.quantity) {
         return {
           success: false,
@@ -275,10 +400,8 @@ class MockStore {
       }
     }
 
-    // Step 2: Atomic Execution
     const orderId = `ORD-${Math.floor(10000 + Math.random() * 90000)}`;
     const timestamp = new Date().toISOString();
-
     const orderItems: OrderItem[] = [];
     let subtotal = 0;
 
@@ -286,7 +409,6 @@ class MockStore {
       const itemSubtotal = +(item.product.selling_price * item.quantity).toFixed(2);
       subtotal += itemSubtotal;
 
-      // 2a. Order Item creation
       orderItems.push({
         order_item_id: `item-${orderId}-${index + 1}`,
         order_id: orderId,
@@ -298,8 +420,7 @@ class MockStore {
         image_url: item.product.image_url
       });
 
-      // 2b. Deduct stock from inventory
-      const invIndex = this.inventory.findIndex(i => i.product_id === item.product.product_id);
+      const invIndex = this.inventory.findIndex(i => String(i.product_id) === String(item.product.product_id));
       if (invIndex > -1) {
         const newStock = this.inventory[invIndex].current_stock - item.quantity;
         this.inventory[invIndex].current_stock = newStock;
@@ -312,12 +433,11 @@ class MockStore {
             : 'IN_STOCK';
       }
 
-      // 2c. Log Stock Transaction (SALE)
       this.transactions.unshift({
         transaction_id: `TXN-${Math.floor(1000 + Math.random() * 9000)}`,
         product_id: item.product.product_id,
         product_name: item.product.name,
-        transaction_type: 'SALE',
+        transaction_type: 'STOCK_OUT',
         quantity: -item.quantity,
         reference_id: orderId,
         transaction_date: timestamp,
@@ -329,7 +449,6 @@ class MockStore {
     const shippingFee = subtotal > 50 ? 0 : 5.00;
     const total = +(subtotal + tax + shippingFee).toFixed(2);
 
-    // 2d. Create Order
     const newOrder: Order = {
       order_id: orderId,
       customer_id: this.currentUser.user_id,
@@ -347,10 +466,7 @@ class MockStore {
     };
 
     this.orders.unshift(newOrder);
-
-    // 2e. Clear cart
     this.cart = [];
-
     this.persist();
     return { success: true, order: newOrder };
   }
@@ -361,8 +477,8 @@ class MockStore {
     name: string;
     sku: string;
     description: string;
-    category_id: string;
-    supplier_id: string;
+    category_id: string | number;
+    supplier_id: string | number;
     selling_price: number;
     cost_price: number;
     image_url: string;
@@ -377,8 +493,8 @@ class MockStore {
       name: data.name,
       sku: data.sku,
       description: data.description,
-      category_id: data.category_id,
-      supplier_id: data.supplier_id,
+      category_id: String(data.category_id),
+      supplier_id: String(data.supplier_id),
       selling_price: data.selling_price,
       cost_price: data.cost_price,
       image_url: data.image_url || 'https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80',
@@ -406,7 +522,7 @@ class MockStore {
         transaction_id: `TXN-${Math.floor(1000 + Math.random() * 9000)}`,
         product_id: productId,
         product_name: data.name,
-        transaction_type: 'RESTOCK',
+        transaction_type: 'STOCK_IN',
         quantity: initialStock,
         reference_id: `INIT-${productId}`,
         transaction_date: timestamp,
@@ -415,22 +531,42 @@ class MockStore {
     }
 
     this.persist();
+
+    // Asynchronously notify backend
+    apiClient.post('/products', {
+      product_name: data.name,
+      description: data.description,
+      category_id: data.category_id,
+      supplier_id: data.supplier_id,
+      selling_price: data.selling_price,
+      cost_price: data.cost_price,
+      image_url: data.image_url,
+      initial_stock: data.initial_stock,
+      reorder_level: data.reorder_level
+    }).then(() => this.syncWithBackend()).catch(() => {});
+
     return this.getProductById(productId)!;
   }
 
-  public updateProduct(productId: string, data: Partial<Product>) {
-    const index = this.products.findIndex(p => p.product_id === productId);
+  public updateProduct(productId: string | number, data: Partial<Product>) {
+    const sId = String(productId);
+    const index = this.products.findIndex(p => String(p.product_id) === sId);
     if (index > -1) {
       this.products[index] = { ...this.products[index], ...data };
       this.persist();
     }
+
+    apiClient.put(`/products/${sId}`, data).then(() => this.syncWithBackend()).catch(() => {});
   }
 
-  public deleteProduct(productId: string) {
-    this.products = this.products.filter(p => p.product_id !== productId);
-    this.inventory = this.inventory.filter(i => i.product_id !== productId);
-    this.cart = this.cart.filter(c => c.product.product_id !== productId);
+  public deleteProduct(productId: string | number) {
+    const sId = String(productId);
+    this.products = this.products.filter(p => String(p.product_id) !== sId);
+    this.inventory = this.inventory.filter(i => String(i.product_id) !== sId);
+    this.cart = this.cart.filter(c => String(c.product.product_id) !== sId);
     this.persist();
+
+    apiClient.delete(`/products/${sId}`).then(() => this.syncWithBackend()).catch(() => {});
   }
 
   // Categories CRUD
@@ -445,20 +581,31 @@ class MockStore {
     };
     this.categories.push(newCat);
     this.persist();
+
+    apiClient.post('/categories', { category_name: data.name, description: data.description })
+      .then(() => this.syncWithBackend()).catch(() => {});
+
     return newCat;
   }
 
-  public updateCategory(categoryId: string, data: Partial<Category>) {
-    const index = this.categories.findIndex(c => c.category_id === categoryId);
+  public updateCategory(categoryId: string | number, data: Partial<Category>) {
+    const sId = String(categoryId);
+    const index = this.categories.findIndex(c => String(c.category_id) === sId);
     if (index > -1) {
       this.categories[index] = { ...this.categories[index], ...data };
       this.persist();
     }
+
+    apiClient.put(`/categories/${sId}`, { category_name: data.name, description: data.description })
+      .then(() => this.syncWithBackend()).catch(() => {});
   }
 
-  public deleteCategory(categoryId: string) {
-    this.categories = this.categories.filter(c => c.category_id !== categoryId);
+  public deleteCategory(categoryId: string | number) {
+    const sId = String(categoryId);
+    this.categories = this.categories.filter(c => String(c.category_id) !== sId);
     this.persist();
+
+    apiClient.delete(`/categories/${sId}`).then(() => this.syncWithBackend()).catch(() => {});
   }
 
   // Suppliers CRUD
@@ -470,26 +617,35 @@ class MockStore {
     };
     this.suppliers.push(newSup);
     this.persist();
+
+    apiClient.post('/suppliers', data).then(() => this.syncWithBackend()).catch(() => {});
     return newSup;
   }
 
-  public updateSupplier(supplierId: string, data: Partial<Supplier>) {
-    const index = this.suppliers.findIndex(s => s.supplier_id === supplierId);
+  public updateSupplier(supplierId: string | number, data: Partial<Supplier>) {
+    const sId = String(supplierId);
+    const index = this.suppliers.findIndex(s => String(s.supplier_id) === sId);
     if (index > -1) {
       this.suppliers[index] = { ...this.suppliers[index], ...data };
       this.persist();
     }
+
+    apiClient.put(`/suppliers/${sId}`, data).then(() => this.syncWithBackend()).catch(() => {});
   }
 
-  public deleteSupplier(supplierId: string) {
-    this.suppliers = this.suppliers.filter(s => s.supplier_id !== supplierId);
+  public deleteSupplier(supplierId: string | number) {
+    const sId = String(supplierId);
+    this.suppliers = this.suppliers.filter(s => String(s.supplier_id) !== sId);
     this.persist();
+
+    apiClient.delete(`/suppliers/${sId}`).then(() => this.syncWithBackend()).catch(() => {});
   }
 
   // Restock & Inventory Update
-  public restockProduct(productId: string, quantityToAdd: number, notes?: string) {
-    const invIndex = this.inventory.findIndex(i => i.product_id === productId);
-    const prod = this.products.find(p => p.product_id === productId);
+  public restockProduct(productId: string | number, quantityToAdd: number, notes?: string) {
+    const sId = String(productId);
+    const invIndex = this.inventory.findIndex(i => String(i.product_id) === sId);
+    const prod = this.products.find(p => String(p.product_id) === sId);
     if (invIndex === -1 || !prod) return;
 
     const timestamp = new Date().toISOString();
@@ -503,12 +659,11 @@ class MockStore {
         ? 'LOW_STOCK'
         : 'IN_STOCK';
 
-    // Log RESTOCK transaction
     this.transactions.unshift({
       transaction_id: `TXN-${Math.floor(1000 + Math.random() * 9000)}`,
-      product_id: productId,
+      product_id: sId,
       product_name: prod.name,
-      transaction_type: 'RESTOCK',
+      transaction_type: 'STOCK_IN',
       quantity: quantityToAdd,
       reference_id: `RESTOCK-${Date.now().toString().slice(-6)}`,
       transaction_date: timestamp,
@@ -516,6 +671,9 @@ class MockStore {
     });
 
     this.persist();
+
+    apiClient.put(`/inventory/${sId}`, { restockAmount: quantityToAdd, notes })
+      .then(() => this.syncWithBackend()).catch(() => {});
   }
 
   // Auth / Role State
@@ -523,9 +681,10 @@ class MockStore {
     return this.currentUser;
   }
 
-  public setCurrentUser(user: User) {
+  public setCurrentUser(user: User): User {
     this.currentUser = user;
     this.persist();
+    return user;
   }
 
   public switchRole(role: UserRole) {
@@ -553,6 +712,15 @@ class MockStore {
       };
     }
     this.persist();
+
+    apiClient.post<{ success: boolean; user: User }>('/auth/login', { email, role })
+      .then(res => {
+        if (res.success && res.user) {
+          this.currentUser = res.user;
+          this.persist();
+        }
+      }).catch(() => {});
+
     return this.currentUser;
   }
 
@@ -567,6 +735,20 @@ class MockStore {
       created_at: new Date().toISOString()
     };
     this.persist();
+
+    apiClient.post<{ success: boolean; user: User }>('/auth/register', {
+      full_name: data.fullName,
+      email: data.email,
+      phone: data.phone,
+      address: data.address,
+      role: data.role || 'customer'
+    }).then(res => {
+      if (res.success && res.user) {
+        this.currentUser = res.user;
+        this.persist();
+      }
+    }).catch(() => {});
+
     return this.currentUser;
   }
 
