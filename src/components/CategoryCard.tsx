@@ -27,8 +27,8 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
       {/* Content */}
       <div className="absolute inset-0 p-6 flex flex-col justify-between pointer-events-none z-10">
         <div className="flex items-center justify-between">
-          <span className="text-[10px] font-mono tracking-widest uppercase text-neutral-300 bg-black/70 px-3 py-1 rounded-full border border-white/15 backdrop-blur-md shadow-sm">
-            {category.product_count !== undefined ? `${category.product_count} PRODUCTS` : 'AISLE'}
+          <span className="text-[10px] font-mono tracking-wider uppercase text-neutral-300 bg-black/70 px-3 py-1 rounded-full border border-white/15 backdrop-blur-md shadow-sm">
+            {category.product_count !== undefined ? `${category.product_count} Products` : 'Department'}
           </span>
           <div className="w-9 h-9 rounded-full border border-white/20 bg-black/40 backdrop-blur-md flex items-center justify-center text-neutral-300 group-hover:border-cyan-400 group-hover:text-cyan-400 group-hover:shadow-[0_0_15px_rgba(0,168,255,0.5)] group-hover:scale-110 transition-all duration-300">
             <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />

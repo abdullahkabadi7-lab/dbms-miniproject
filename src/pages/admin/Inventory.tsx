@@ -162,23 +162,23 @@ export const Inventory: React.FC = () => {
         <Modal
           isOpen={true}
           onClose={() => setSelectedProduct(null)}
-          title="INVENTORY REPLENISHMENT"
+          title="Replenish Inventory"
           subtitle={`Product: ${selectedProduct.name} (${selectedProduct.sku})`}
         >
           <form onSubmit={handleRestockSubmit} className="space-y-4">
-            <div className="p-4 bg-black border border-neutral-900 grid grid-cols-2 gap-4 text-xs font-mono">
+            <div className="p-4 bg-surface-900 border border-white/[0.08] rounded-xl grid grid-cols-2 gap-4 text-xs font-mono">
               <div>
-                <span className="text-[10px] text-neutral-400 uppercase block">CURRENT ON HAND:</span>
-                <span className="text-white font-bold text-base">{selectedProduct.current_stock} Units</span>
+                <span className="text-[10px] text-neutral-400 uppercase tracking-wider block">Current On Hand</span>
+                <span className="text-white font-bold text-base mt-0.5 block">{selectedProduct.current_stock} Units</span>
               </div>
               <div>
-                <span className="text-[10px] text-neutral-400 uppercase block">REORDER LEVEL:</span>
-                <span className="text-amber-400 font-bold text-base">{selectedProduct.reorder_level} Units</span>
+                <span className="text-[10px] text-neutral-400 uppercase tracking-wider block">Reorder Threshold</span>
+                <span className="text-amber-400 font-bold text-base mt-0.5 block">{selectedProduct.reorder_level} Units</span>
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1.5">
+              <label className="block text-xs font-mono uppercase tracking-wider text-neutral-300 mb-1.5">
                 Quantity to Restock *
               </label>
               <input
@@ -187,16 +187,16 @@ export const Inventory: React.FC = () => {
                 required
                 value={restockAmount}
                 onChange={(e) => setRestockAmount(Number(e.target.value))}
-                className="w-full bg-black border border-neutral-800 text-white px-4 py-2 text-sm font-mono focus:outline-none focus:border-[#00A8FF]"
+                className="w-full bg-surface-900 border border-white/10 rounded-xl text-white px-4 py-2.5 text-sm font-mono focus:outline-none focus:border-[#00A8FF]"
               />
-              <span className="text-[11px] font-mono text-neutral-400 mt-1 block">
-                Resulting inventory: {selectedProduct.current_stock + Number(restockAmount)} units
+              <span className="text-[11px] font-mono text-neutral-400 mt-1.5 block">
+                Resulting inventory level will be: <strong className="text-white">{selectedProduct.current_stock + Number(restockAmount)} units</strong>
               </span>
             </div>
 
             <div>
-              <label className="block text-xs font-mono uppercase tracking-wider text-neutral-400 mb-1.5">
-                Journal Reference Notes
+              <label className="block text-xs font-mono uppercase tracking-wider text-neutral-300 mb-1.5">
+                Restock Notes / PO Reference
               </label>
               <input
                 type="text"
@@ -204,23 +204,23 @@ export const Inventory: React.FC = () => {
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="e.g. Purchase order PO-2026-90"
-                className="w-full bg-black border border-neutral-800 text-white px-4 py-2 text-sm focus:outline-none focus:border-[#00A8FF]"
+                className="w-full bg-surface-900 border border-white/10 rounded-xl text-white px-4 py-2.5 text-sm focus:outline-none focus:border-[#00A8FF]"
               />
             </div>
 
-            <div className="pt-4 border-t border-neutral-900 flex items-center justify-end gap-3">
+            <div className="pt-4 border-t border-white/10 flex items-center justify-end gap-3">
               <button
                 type="button"
                 onClick={() => setSelectedProduct(null)}
-                className="px-4 py-2 border border-neutral-800 text-neutral-400 hover:text-white text-xs font-mono uppercase"
+                className="px-4 py-2.5 border border-white/10 rounded-lg text-neutral-400 hover:text-white text-xs font-mono uppercase transition-colors"
               >
-                CANCEL
+                Cancel
               </button>
               <button
                 type="submit"
-                className="px-6 py-2 bg-[#00A8FF] text-black font-mono font-bold text-xs uppercase hover:bg-[#29C5FF]"
+                className="px-6 py-2.5 bg-[#00A8FF] hover:bg-[#38BDF8] text-black font-mono font-bold text-xs uppercase rounded-lg transition-colors"
               >
-                COMMIT RESTOCK
+                Commit Restock
               </button>
             </div>
           </form>

@@ -30,7 +30,7 @@ export const Dashboard: React.FC = () => {
   // Restock modal state
   const [restockProduct, setRestockProduct] = useState<ProductWithInventory | null>(null);
   const [restockQty, setRestockQty] = useState(25);
-  const [restockNotes, setRestockNotes] = useState('Standard supplier restocking');
+  const [restockNotes, setRestockNotes] = useState('Standard supplier replenishment');
 
   const loadData = () => {
     setProducts(mockStore.getProductsWithInventory());
@@ -52,6 +52,7 @@ export const Dashboard: React.FC = () => {
   const lowStockCount = products.filter((p) => p.stock_status === 'LOW_STOCK').length;
   const outOfStockCount = products.filter((p) => p.stock_status === 'OUT_OF_STOCK').length;
 
+  const totalStockUnits = products.reduce((acc, p) => acc + (p.current_stock || 0), 0);
   const totalRevenue = orders.reduce((sum, o) => sum + o.total, 0);
   const avgOrderValue = orders.length > 0 ? totalRevenue / orders.length : 0;
 
@@ -68,122 +69,118 @@ export const Dashboard: React.FC = () => {
       {/* Top Header */}
       <div className="pb-6 border-b border-white/[0.08] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-mono text-[#00A8FF] uppercase tracking-widest mb-1.5">
+          <div className="flex items-center gap-2 text-xs font-mono text-[#00A8FF] uppercase tracking-wider mb-1 font-semibold">
             <Activity className="w-3.5 h-3.5" />
-            <span>OPERATIONS COMMAND CENTER</span>
+            <span>OPERATIONS OVERVIEW</span>
             <span className="text-neutral-600">•</span>
-            <span className="text-neutral-400">POSTGRESQL AUDITED</span>
+            <span className="text-neutral-400">REAL-TIME INVENTORY & ORDERS</span>
           </div>
-          <h1 className="font-display font-black text-2xl sm:text-3xl uppercase tracking-tight text-white">
-            TRANSACTIONAL OVERVIEW
+          <h1 className="font-display font-bold text-2xl sm:text-3xl tracking-tight text-white">
+            Management Dashboard
           </h1>
         </div>
 
         <div className="flex items-center gap-3">
           <Link
             to="/admin/products"
-            className="px-4 py-2.5 bg-[#00A8FF] hover:bg-[#38BDF8] text-black font-mono font-bold text-xs tracking-wider uppercase rounded-lg transition-all flex items-center gap-2 shadow-[0_0_15px_rgba(0,168,255,0.3)] hover:shadow-[0_0_20px_rgba(0,168,255,0.5)]"
+            className="px-4 py-2 bg-[#00A8FF] hover:bg-[#38BDF8] text-black font-mono font-bold text-xs tracking-wider uppercase rounded-lg transition-all flex items-center gap-2 shadow-sm"
           >
             <Plus className="w-4 h-4" />
-            REGISTER NEW SKU
+            Add New Product
           </Link>
         </div>
       </div>
 
-      {/* Top Operational Metrics Bento Grid */}
+      {/* Operational Metrics Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Metric 1: Total SKUs */}
-        <div className="p-6 bg-surface-900 border border-white/[0.08] hover:border-white/20 rounded-2xl relative overflow-hidden transition-all duration-300 hover:-translate-y-0.5">
-          <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-cyan-400/30 to-transparent" />
+        {/* Metric 1: Total Products */}
+        <div className="p-6 bg-surface-900/90 border border-white/[0.08] hover:border-white/20 rounded-2xl relative overflow-hidden transition-all duration-300">
           <div className="flex items-center justify-between text-neutral-400 mb-3">
-            <span className="text-xs font-mono uppercase tracking-wider font-semibold">TOTAL ACTIVE SKUS</span>
+            <span className="text-xs font-mono uppercase tracking-wider font-semibold">TOTAL PRODUCTS</span>
             <div className="w-8 h-8 rounded-lg bg-[#00A8FF]/10 flex items-center justify-center text-[#00A8FF]">
               <Package className="w-4 h-4" />
             </div>
           </div>
-          <div className="font-display font-black text-3xl text-white">
+          <div className="font-display font-bold text-3xl text-white">
             {products.length}
           </div>
-          <div className="mt-3 pt-3 border-t border-white/[0.06] text-[11px] font-mono text-neutral-400 flex items-center justify-between">
-            <span>Departments: {mockStore.getCategories().length}</span>
-            <span className="text-emerald-400">{inStockCount} In Stock</span>
+          <div className="mt-3 pt-3 border-t border-white/[0.06] text-xs text-neutral-400 flex items-center justify-between">
+            <span>{mockStore.getCategories().length} Departments</span>
+            <span className="text-emerald-400 font-mono font-semibold">{totalStockUnits} Total Units</span>
           </div>
         </div>
 
         {/* Metric 2: Total Orders */}
-        <div className="p-6 bg-surface-900 border border-white/[0.08] hover:border-white/20 rounded-2xl relative overflow-hidden transition-all duration-300 hover:-translate-y-0.5">
-          <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-emerald-400/30 to-transparent" />
+        <div className="p-6 bg-surface-900/90 border border-white/[0.08] hover:border-white/20 rounded-2xl relative overflow-hidden transition-all duration-300">
           <div className="flex items-center justify-between text-neutral-400 mb-3">
-            <span className="text-xs font-mono uppercase tracking-wider font-semibold">CONFIRMED ORDERS</span>
+            <span className="text-xs font-mono uppercase tracking-wider font-semibold">ORDERS PLACED</span>
             <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400">
               <ClipboardList className="w-4 h-4" />
             </div>
           </div>
-          <div className="font-display font-black text-3xl text-white">
+          <div className="font-display font-bold text-3xl text-white">
             {orders.length}
           </div>
-          <div className="mt-3 pt-3 border-t border-white/[0.06] text-[11px] font-mono text-emerald-400 flex items-center justify-between">
-            <span>ACID Atomicity</span>
-            <span className="font-semibold">100% Guaranteed</span>
+          <div className="mt-3 pt-3 border-t border-white/[0.06] text-xs text-emerald-400 flex items-center justify-between font-mono">
+            <span>Verified Orders</span>
+            <span className="font-semibold">100% Fulfilled</span>
           </div>
         </div>
 
         {/* Metric 3: Low Stock Alerts */}
-        <div className="p-6 bg-surface-900 border border-white/[0.08] hover:border-white/20 rounded-2xl relative overflow-hidden transition-all duration-300 hover:-translate-y-0.5">
-          <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-amber-400/30 to-transparent" />
+        <div className="p-6 bg-surface-900/90 border border-white/[0.08] hover:border-white/20 rounded-2xl relative overflow-hidden transition-all duration-300">
           <div className="flex items-center justify-between text-neutral-400 mb-3">
-            <span className="text-xs font-mono uppercase tracking-wider font-semibold">STOCK ATTENTION</span>
+            <span className="text-xs font-mono uppercase tracking-wider font-semibold">LOW STOCK ALERTS</span>
             <div className="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-400">
               <AlertTriangle className="w-4 h-4" />
             </div>
           </div>
-          <div className="font-display font-black text-3xl text-amber-400">
+          <div className="font-display font-bold text-3xl text-amber-400">
             {lowStockProducts.length}
           </div>
-          <div className="mt-3 pt-3 border-t border-white/[0.06] text-[11px] font-mono text-neutral-400 flex items-center justify-between">
-            <span>Threshold Minimums</span>
-            <span className={lowStockProducts.length > 0 ? 'text-amber-400 font-bold' : 'text-neutral-500'}>
-              {outOfStockCount} Depleted
+          <div className="mt-3 pt-3 border-t border-white/[0.06] text-xs text-neutral-400 flex items-center justify-between font-mono">
+            <span>Needs Reorder</span>
+            <span className={outOfStockCount > 0 ? 'text-rose-400 font-bold' : 'text-neutral-400'}>
+              {outOfStockCount} Out of Stock
             </span>
           </div>
         </div>
 
         {/* Metric 4: Total Revenue */}
-        <div className="p-6 bg-surface-900 border border-white/[0.08] hover:border-white/20 rounded-2xl relative overflow-hidden transition-all duration-300 hover:-translate-y-0.5">
-          <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-[#00A8FF]/30 to-transparent" />
+        <div className="p-6 bg-surface-900/90 border border-white/[0.08] hover:border-white/20 rounded-2xl relative overflow-hidden transition-all duration-300">
           <div className="flex items-center justify-between text-neutral-400 mb-3">
-            <span className="text-xs font-mono uppercase tracking-wider font-semibold">GROSS REVENUE</span>
+            <span className="text-xs font-mono uppercase tracking-wider font-semibold">GROSS SALES</span>
             <div className="w-8 h-8 rounded-lg bg-[#00A8FF]/10 flex items-center justify-center text-[#00A8FF]">
               <DollarSign className="w-4 h-4" />
             </div>
           </div>
-          <div className="font-display font-black text-3xl text-[#00A8FF]">
+          <div className="font-display font-bold text-3xl text-[#00A8FF]">
             ${totalRevenue.toFixed(2)}
           </div>
-          <div className="mt-3 pt-3 border-t border-white/[0.06] text-[11px] font-mono text-neutral-400 flex items-center justify-between">
-            <span>AOV: ${avgOrderValue.toFixed(2)}</span>
-            <span className="text-white font-medium">USD Settled</span>
+          <div className="mt-3 pt-3 border-t border-white/[0.06] text-xs text-neutral-400 flex items-center justify-between font-mono">
+            <span>Avg Order: ${avgOrderValue.toFixed(2)}</span>
+            <span className="text-neutral-300">USD</span>
           </div>
         </div>
       </div>
 
-      {/* Inventory Health Ratio Bar */}
-      <div className="p-5 bg-surface-900 border border-white/[0.08] rounded-2xl">
+      {/* Catalog Stock Health Distribution */}
+      <div className="p-5 bg-surface-900/90 border border-white/[0.08] rounded-2xl">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-3 text-xs font-mono">
           <div className="flex items-center gap-2">
             <Boxes className="w-4 h-4 text-[#00A8FF]" />
-            <span className="text-white font-semibold">CATALOG INVENTORY HEALTH DISTRIBUTION</span>
+            <span className="text-white font-semibold">INVENTORY STOCK HEALTH</span>
           </div>
-          <div className="flex items-center gap-4 text-[11px]">
-            <span className="flex items-center gap-1.5 text-emerald-400">
+          <div className="flex items-center gap-4 text-xs">
+            <span className="flex items-center gap-1.5 text-emerald-400 font-semibold">
               <span className="w-2 h-2 rounded-full bg-emerald-400" />
               In-Stock ({inStockCount})
             </span>
-            <span className="flex items-center gap-1.5 text-amber-400">
+            <span className="flex items-center gap-1.5 text-amber-400 font-semibold">
               <span className="w-2 h-2 rounded-full bg-amber-400" />
               Low Stock ({lowStockCount})
             </span>
-            <span className="flex items-center gap-1.5 text-rose-400">
+            <span className="flex items-center gap-1.5 text-rose-400 font-semibold">
               <span className="w-2 h-2 rounded-full bg-rose-400" />
               Out of Stock ({outOfStockCount})
             </span>
@@ -210,29 +207,29 @@ export const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Two Column Layout: Low Stock Alerts & Recent Orders */}
+      {/* Two-Column Layout: Low Stock Alerts & Recent Orders */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
         {/* Left: Low Stock Attention Required */}
-        <div className="bg-surface-900 border border-white/[0.08] rounded-2xl p-6 space-y-4">
+        <div className="bg-surface-900/90 border border-white/[0.08] rounded-2xl p-6 space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
             <div className="flex items-center gap-2">
               <TrendingDown className="w-4 h-4 text-amber-400" />
-              <h2 className="font-display font-bold text-base uppercase tracking-wider text-white">
-                LOW STOCK INVENTORY ALERTS
+              <h2 className="font-display font-semibold text-base text-white">
+                Low Stock Items
               </h2>
             </div>
             <Link
               to="/admin/inventory"
-              className="text-[11px] font-mono text-[#00A8FF] hover:underline"
+              className="text-xs font-mono text-[#00A8FF] hover:underline uppercase"
             >
-              FULL LEDGER →
+              Full Inventory →
             </Link>
           </div>
 
           {lowStockProducts.length === 0 ? (
             <div className="py-8 text-center text-xs font-mono text-neutral-400">
               <CheckCircle2 className="w-6 h-6 text-emerald-400 mx-auto mb-2" />
-              ALL INVENTORY LEVELS ABOVE THRESHOLD SAFETY
+              All product inventories are currently healthy.
             </div>
           ) : (
             <div className="divide-y divide-white/[0.06]">
@@ -240,12 +237,12 @@ export const Dashboard: React.FC = () => {
                 <div key={p.product_id} className="py-3 flex items-center justify-between gap-3 text-xs font-mono">
                   <div className="min-w-0">
                     <div className="text-white font-sans font-medium truncate">{p.name}</div>
-                    <div className="text-[11px] text-neutral-400 mt-0.5">
+                    <div className="text-xs text-neutral-400 mt-0.5">
                       SKU: <span className="text-neutral-300">{p.sku}</span> • On Hand:{' '}
                       <span className={p.current_stock === 0 ? 'text-rose-400 font-bold' : 'text-amber-400 font-bold'}>
                         {p.current_stock}
                       </span>{' '}
-                      (Reorder Min: {p.reorder_level})
+                      (Reorder Level: {p.reorder_level})
                     </div>
                   </div>
                   <button
@@ -253,9 +250,9 @@ export const Dashboard: React.FC = () => {
                       setRestockProduct(p);
                       setRestockQty(Math.max(20, p.reorder_level * 2));
                     }}
-                    className="px-3 py-1.5 bg-[#00A8FF]/10 border border-[#00A8FF]/30 text-[#00A8FF] hover:bg-[#00A8FF] hover:text-black font-mono text-[11px] tracking-wider uppercase rounded-lg transition-all shrink-0 font-semibold"
+                    className="px-3 py-1.5 bg-[#00A8FF]/10 border border-[#00A8FF]/30 text-[#00A8FF] hover:bg-[#00A8FF] hover:text-black font-mono text-xs tracking-wider uppercase rounded-lg transition-all shrink-0 font-semibold"
                   >
-                    RESTOCK
+                    Restock
                   </button>
                 </div>
               ))}
@@ -264,25 +261,25 @@ export const Dashboard: React.FC = () => {
         </div>
 
         {/* Right: Recent Orders */}
-        <div className="bg-surface-900 border border-white/[0.08] rounded-2xl p-6 space-y-4">
+        <div className="bg-surface-900/90 border border-white/[0.08] rounded-2xl p-6 space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
             <div className="flex items-center gap-2">
               <ClipboardList className="w-4 h-4 text-emerald-400" />
-              <h2 className="font-display font-bold text-base uppercase tracking-wider text-white">
-                RECENT CUSTOMER ORDERS
+              <h2 className="font-display font-semibold text-base text-white">
+                Recent Customer Orders
               </h2>
             </div>
             <Link
               to="/admin/orders"
-              className="text-[11px] font-mono text-[#00A8FF] hover:underline"
+              className="text-xs font-mono text-[#00A8FF] hover:underline uppercase"
             >
-              ALL ORDERS →
+              All Orders →
             </Link>
           </div>
 
           {orders.length === 0 ? (
             <div className="py-8 text-center text-xs font-mono text-neutral-400">
-              NO ORDERS RECORDED YET
+              No orders recorded yet.
             </div>
           ) : (
             <div className="divide-y divide-white/[0.06]">
@@ -294,7 +291,7 @@ export const Dashboard: React.FC = () => {
                     </div>
                     <div>
                       <div className="text-white font-sans font-medium">{ord.customer_name}</div>
-                      <div className="text-[11px] text-neutral-400">
+                      <div className="text-xs text-neutral-400">
                         #{ord.order_id} • {new Date(ord.created_at).toLocaleDateString()}
                       </div>
                     </div>
@@ -310,20 +307,20 @@ export const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Bottom: Recent Stock Transactions Stream */}
-      <div className="bg-surface-900 border border-white/[0.08] rounded-2xl p-6 space-y-4">
+      {/* Bottom: Recent Stock Transactions Audit Trail */}
+      <div className="bg-surface-900/90 border border-white/[0.08] rounded-2xl p-6 space-y-4">
         <div className="flex items-center justify-between pb-3 border-b border-white/[0.08]">
           <div className="flex items-center gap-2">
             <History className="w-4 h-4 text-[#00A8FF]" />
-            <h2 className="font-display font-bold text-base uppercase tracking-wider text-white">
-              RECENT STOCK TRANSACTIONS (AUDIT TRAIL)
+            <h2 className="font-display font-semibold text-base text-white">
+              Recent Inventory Transactions
             </h2>
           </div>
           <Link
             to="/admin/transactions"
-            className="text-[11px] font-mono text-[#00A8FF] hover:underline"
+            className="text-xs font-mono text-[#00A8FF] hover:underline uppercase"
           >
-            VIEW COMPLETE AUDIT JOURNAL →
+            Complete Journal →
           </Link>
         </div>
 
@@ -347,7 +344,7 @@ export const Dashboard: React.FC = () => {
                   <td className="py-3 px-3">
                     <span
                       className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                        txn.transaction_type === 'STOCK_IN'
+                        txn.transaction_type === 'STOCK_IN' || txn.transaction_type === 'RESTOCK'
                           ? 'bg-emerald-950/60 text-emerald-300 border border-emerald-500/30'
                           : 'bg-rose-950/60 text-rose-300 border border-rose-500/30'
                       }`}
@@ -378,25 +375,25 @@ export const Dashboard: React.FC = () => {
         <Modal
           isOpen={!!restockProduct}
           onClose={() => setRestockProduct(null)}
-          title={`RESTOCK SKU: ${restockProduct.sku}`}
+          title={`Restock Product: ${restockProduct.name}`}
         >
-          <form onSubmit={handleExecuteRestock} className="space-y-4 font-mono text-xs">
+          <form onSubmit={handleExecuteRestock} className="space-y-4 text-xs font-mono">
             <div>
-              <label className="text-neutral-400 block mb-1">Product</label>
-              <div className="p-3 bg-surface-950 border border-white/10 rounded-lg text-white font-sans font-medium">
-                {restockProduct.name}
+              <label className="text-neutral-400 block mb-1">Product SKU</label>
+              <div className="p-3 bg-surface-950 border border-white/10 rounded-lg text-white font-mono font-semibold">
+                {restockProduct.sku}
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-neutral-400 block mb-1">Current Stock</label>
+                <label className="text-neutral-400 block mb-1">Current Stock On Hand</label>
                 <div className="p-3 bg-surface-950 border border-white/10 rounded-lg text-amber-400 font-bold">
-                  {restockProduct.current_stock}
+                  {restockProduct.current_stock} units
                 </div>
               </div>
               <div>
-                <label className="text-neutral-400 block mb-1">Restock Units</label>
+                <label className="text-neutral-400 block mb-1">Restock Quantity *</label>
                 <input
                   type="number"
                   min="1"
@@ -409,12 +406,13 @@ export const Dashboard: React.FC = () => {
             </div>
 
             <div>
-              <label className="text-neutral-400 block mb-1">Audit Notes / Supplier Delivery</label>
+              <label className="text-neutral-400 block mb-1">Supplier Delivery Notes</label>
               <input
                 type="text"
                 value={restockNotes}
                 onChange={(e) => setRestockNotes(e.target.value)}
-                className="w-full p-3 bg-surface-950 border border-white/20 rounded-lg text-white focus:border-[#00A8FF] outline-none"
+                placeholder="e.g. Weekly vendor shipment from cooperative"
+                className="w-full p-3 bg-surface-950 border border-white/20 rounded-lg text-white focus:border-[#00A8FF] outline-none font-sans"
                 required
               />
             </div>
@@ -425,13 +423,13 @@ export const Dashboard: React.FC = () => {
                 onClick={() => setRestockProduct(null)}
                 className="px-4 py-2 bg-surface-950 hover:bg-white/10 text-neutral-300 rounded-lg uppercase"
               >
-                CANCEL
+                Cancel
               </button>
               <button
                 type="submit"
-                className="px-5 py-2 bg-[#00A8FF] hover:bg-[#38BDF8] text-black font-bold rounded-lg uppercase shadow-lg shadow-[#00A8FF]/20"
+                className="px-5 py-2 bg-[#00A8FF] hover:bg-[#38BDF8] text-black font-bold rounded-lg uppercase shadow-sm"
               >
-                CONFIRM STOCK IN
+                Confirm Restock
               </button>
             </div>
           </form>

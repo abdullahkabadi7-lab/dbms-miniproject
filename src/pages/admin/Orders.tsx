@@ -125,65 +125,71 @@ export const Orders: React.FC = () => {
         <Modal
           isOpen={true}
           onClose={() => setSelectedOrder(null)}
-          title={`ORDER RECEIPT: ${selectedOrder.order_id}`}
-          subtitle={`Committed at ${new Date(selectedOrder.created_at).toLocaleString()}`}
+          title={`Order Receipt: ${selectedOrder.order_id}`}
+          subtitle={`Placed on ${new Date(selectedOrder.created_at).toLocaleString()}`}
           maxWidth="xl"
         >
-          <div className="space-y-6 font-mono text-xs">
+          <div className="space-y-5 font-mono text-xs">
             {/* Customer Details */}
-            <div className="p-4 bg-black border border-neutral-900 grid grid-cols-2 gap-4">
+            <div className="p-4 bg-surface-900 border border-white/[0.08] rounded-xl grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <span className="text-[10px] text-neutral-400 uppercase block mb-1">CUSTOMER:</span>
+                <span className="text-[10px] text-neutral-400 uppercase tracking-wider block mb-1">Customer Info</span>
                 <div className="text-white font-sans font-medium text-sm">{selectedOrder.customer_name}</div>
-                <div className="text-neutral-400">{selectedOrder.customer_email}</div>
-                <div className="text-neutral-400">{selectedOrder.customer_phone}</div>
+                <div className="text-neutral-400 font-mono text-xs mt-0.5">{selectedOrder.customer_email}</div>
+                <div className="text-neutral-400 font-mono text-xs">{selectedOrder.customer_phone}</div>
               </div>
               <div>
-                <span className="text-[10px] text-neutral-400 uppercase block mb-1">SHIPPING ADDRESS:</span>
-                <div className="text-neutral-200">{selectedOrder.shipping_address}</div>
+                <span className="text-[10px] text-neutral-400 uppercase tracking-wider block mb-1">Shipping Destination</span>
+                <div className="text-neutral-200 font-sans text-xs leading-relaxed">{selectedOrder.shipping_address}</div>
               </div>
             </div>
 
             {/* Line items list */}
             <div>
-              <span className="text-[10px] text-neutral-400 uppercase block mb-2">
-                ORDER ITEMS ALLOCATION (TABLE: order_items)
+              <span className="text-[10px] text-neutral-400 uppercase tracking-wider block mb-2 font-semibold">
+                Order Items ({selectedOrder.items?.length || 0})
               </span>
-              <div className="border border-neutral-900 divide-y divide-neutral-900">
+              <div className="bg-surface-900 border border-white/[0.08] rounded-xl overflow-hidden divide-y divide-white/[0.06]">
                 {selectedOrder.items?.map((item) => (
-                  <div key={item.order_item_id} className="p-3 flex items-center justify-between bg-black">
+                  <div key={item.order_item_id} className="p-3.5 flex items-center justify-between hover:bg-white/[0.02] transition-colors">
                     <div className="flex items-center gap-3">
-                      {item.image_url && (
-                        <img src={item.image_url} alt="" className="w-8 h-8 object-cover border border-neutral-800" />
+                      {item.image_url ? (
+                        <img src={item.image_url} alt="" className="w-10 h-10 object-cover rounded-lg border border-white/10" />
+                      ) : (
+                        <div className="w-10 h-10 rounded-lg bg-surface-950 border border-white/10 flex items-center justify-center text-neutral-600 font-sans text-xs">
+                          Item
+                        </div>
                       )}
                       <div>
-                        <div className="text-white font-sans">{item.product_name}</div>
-                        <div className="text-[10px] text-neutral-400">{item.quantity} × ${item.unit_price.toFixed(2)}</div>
+                        <div className="text-white font-sans font-medium text-sm">{item.product_name}</div>
+                        <div className="text-[11px] text-neutral-400 font-mono">
+                          {item.quantity} × ${item.unit_price.toFixed(2)}
+                        </div>
                       </div>
                     </div>
-                    <span className="font-bold text-white">${item.subtotal.toFixed(2)}</span>
+                    <span className="font-mono font-bold text-white text-sm">${item.subtotal.toFixed(2)}</span>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Pricing breakdown */}
-            <div className="p-4 bg-black border border-neutral-900 space-y-1.5">
-              <div className="flex justify-between text-neutral-400">
-                <span>Subtotal:</span>
-                <span className="text-white">${selectedOrder.subtotal.toFixed(2)}</span>
+            <div className="p-4 bg-surface-900 border border-white/[0.08] rounded-xl space-y-2">
+              <div className="flex justify-between text-neutral-400 text-xs">
+                <span>Subtotal</span>
+                <span className="text-white font-mono">${selectedOrder.subtotal.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between text-neutral-400">
-                <span>Tax (8%):</span>
-                <span className="text-white">${selectedOrder.tax.toFixed(2)}</span>
+              <div className="flex justify-between text-neutral-400 text-xs">
+                <span>Tax (8%)</span>
+                <span className="text-white font-mono">${selectedOrder.tax.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between text-neutral-400">
-                <span>Shipping:</span>
-                <span className="text-white">${selectedOrder.shipping_fee.toFixed(2)}</span>
+              <div className="flex justify-between text-neutral-400 text-xs">
+                <span>Shipping Fee</span>
+                <span className="text-white font-mono">${selectedOrder.shipping_fee.toFixed(2)}</span>
               </div>
-              <div className="pt-2 border-t border-neutral-800 flex justify-between font-bold text-sm">
-                <span className="text-white">Total Settled:</span>
-                <span className="text-[#00A8FF]">${selectedOrder.total.toFixed(2)}</span>
+              <div className="pt-2.5 border-t border-white/10 flex justify-between items-center font-bold">
+                <span className="text-white font-sans text-sm">Total Paid</span>
+                <span className="text-[#00A8FF] font-mono text-base">${selectedOrder.total.toFixed(2)}</span>
               </div>
             </div>
 
@@ -191,9 +197,9 @@ export const Orders: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setSelectedOrder(null)}
-                className="px-6 py-2 bg-neutral-900 hover:bg-neutral-800 text-white font-mono text-xs uppercase"
+                className="px-5 py-2.5 bg-white/10 hover:bg-white/15 text-white font-mono text-xs uppercase rounded-lg transition-colors"
               >
-                CLOSE
+                Close Receipt
               </button>
             </div>
           </div>
