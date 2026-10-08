@@ -22,6 +22,7 @@ import {
   Activity
 } from 'lucide-react';
 import { mockStore } from '../services/mockStore';
+import { DynamicCursorBackground } from '../components/effects/DynamicCursorBackground';
 
 export const AdminLayout: React.FC = () => {
   const location = useLocation();
@@ -74,7 +75,10 @@ export const AdminLayout: React.FC = () => {
   const currentNav = navigation.find((item) => item.href === location.pathname);
 
   return (
-    <div className="min-h-screen bg-[#040507] text-white flex selection:bg-[#00A8FF] selection:text-black">
+    <div className="min-h-screen bg-black text-white flex selection:bg-[#00A8FF] selection:text-black relative">
+      {/* Global Interactive Dynamic Cursor & Parallax Ambient Star Lighting */}
+      <DynamicCursorBackground />
+
       {/* Mobile Sidebar Backdrop */}
       {sidebarOpen && (
         <div
@@ -253,7 +257,7 @@ export const AdminLayout: React.FC = () => {
         </header>
 
         {/* Routed Admin Page Body */}
-        <main className="flex-1 p-4 sm:p-8 bg-[#040507] overflow-y-auto">
+        <main className="flex-1 p-4 sm:p-8 bg-transparent overflow-y-auto relative z-10">
           <Outlet />
         </main>
       </div>

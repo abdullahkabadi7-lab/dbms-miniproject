@@ -54,7 +54,7 @@ export const Landing: React.FC = () => {
     .slice(0, 8);
 
   return (
-    <div className="w-full bg-[#040507] text-white selection:bg-[#00A8FF] selection:text-black">
+    <div className="w-full bg-transparent text-white selection:bg-[#00A8FF] selection:text-black">
       {/* 1. Cinematic Entrance */}
       {!hasEntered && (
         <CinematicEntrance onComplete={() => setHasEntered(true)} />
@@ -66,7 +66,7 @@ export const Landing: React.FC = () => {
       {/* ======================================================== */}
       {/* REAL-TIME WAREHOUSE TELEMETRY RIBBON                     */}
       {/* ======================================================== */}
-      <div className="border-y border-white/[0.08] bg-[#08090E]/90 backdrop-blur-md overflow-hidden py-3 font-mono text-xs text-neutral-400">
+      <div className="border-y border-white/[0.08] bg-[#08090E]/60 backdrop-blur-md overflow-hidden py-3 font-mono text-xs text-neutral-400">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <span className="flex items-center gap-1.5 text-emerald-400 font-semibold">
@@ -102,7 +102,7 @@ export const Landing: React.FC = () => {
       {/* ======================================================== */}
       {/* 3. EDITORIAL HERO & CURATED RESERVE                       */}
       {/* ======================================================== */}
-      <section id="store-hero-section" className="relative min-h-[85vh] flex flex-col justify-between p-6 sm:p-12 lg:p-16 border-b border-white/[0.08] bg-gradient-to-b from-[#08090E] via-[#040507] to-[#08090E] overflow-hidden">
+      <section id="store-hero-section" className="relative min-h-[85vh] flex flex-col justify-between p-6 sm:p-12 lg:p-16 border-b border-white/[0.08] bg-transparent overflow-hidden">
         {/* Subtle Radial Glow */}
         <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-[#00A8FF]/5 rounded-full blur-[140px] pointer-events-none" />
 
@@ -194,7 +194,7 @@ export const Landing: React.FC = () => {
       {/* ======================================================== */}
       {/* 4. FEATURED AISLES / BENTO DEPARTMENT GRID                */}
       {/* ======================================================== */}
-      <section className="py-20 px-4 sm:px-8 lg:px-12 border-b border-white/[0.08] bg-[#040507]">
+      <section className="py-20 px-4 sm:px-8 lg:px-12 border-b border-white/[0.08] bg-transparent">
         <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-12 gap-4">
           <div>
             <span className="text-[10px] font-mono text-cyan-400 uppercase tracking-widest block mb-2">
@@ -223,7 +223,7 @@ export const Landing: React.FC = () => {
       {/* ======================================================== */}
       {/* 5. CURATED ESSENTIALS SHOWCASE WITH LIVE FILTERS          */}
       {/* ======================================================== */}
-      <section className="py-20 px-4 sm:px-8 lg:px-12 border-b border-white/[0.08] bg-surface-950">
+      <section className="py-20 px-4 sm:px-8 lg:px-12 border-b border-white/[0.08] bg-transparent">
         <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between mb-10 gap-6">
           <div>
             <div className="flex items-center gap-2 mb-2">
@@ -323,7 +323,7 @@ export const Landing: React.FC = () => {
       {/* ======================================================== */}
       {/* 6. THE SMARTMART STANDARD (Architectural Bento Showcase)  */}
       {/* ======================================================== */}
-      <section className="py-24 px-4 sm:px-8 lg:px-12 border-b border-white/[0.08] bg-[#040507]">
+      <section className="py-24 px-4 sm:px-8 lg:px-12 border-b border-white/[0.08] bg-transparent">
         <div className="max-w-4xl mx-auto text-center mb-16">
           <span className="text-[10px] font-mono text-cyan-400 uppercase tracking-widest block mb-3">
             TECHNICAL & CULINARY EXCELLENCE
@@ -338,7 +338,7 @@ export const Landing: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
           {/* Bento Card 1 */}
-          <div className="p-8 rounded-2xl bg-surface-900 border border-white/10 hover:border-white/20 backdrop-blur-md relative transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(0,0,0,0.5)] flex flex-col justify-between">
+          <div className="p-8 rounded-2xl bg-surface-900/80 border border-white/10 hover:border-white/20 backdrop-blur-md relative transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(0,0,0,0.5)] flex flex-col justify-between">
             <div>
               <span className="text-xs font-mono text-cyan-400 uppercase tracking-widest block mb-4">
                 01 // ORIGIN
@@ -356,7 +356,7 @@ export const Landing: React.FC = () => {
           </div>
 
           {/* Bento Card 2 */}
-          <div className="p-8 rounded-2xl bg-surface-900 border border-white/10 hover:border-white/20 backdrop-blur-md relative transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(0,0,0,0.5)] flex flex-col justify-between">
+          <div className="p-8 rounded-2xl bg-surface-900/80 border border-white/10 hover:border-white/20 backdrop-blur-md relative transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(0,0,0,0.5)] flex flex-col justify-between">
             <div>
               <span className="text-xs font-mono text-emerald-400 uppercase tracking-widest block mb-4">
                 02 // ATOMICITY
@@ -374,7 +374,7 @@ export const Landing: React.FC = () => {
           </div>
 
           {/* Bento Card 3 */}
-          <div className="p-8 rounded-2xl bg-surface-900 border border-white/10 hover:border-white/20 backdrop-blur-md relative transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(0,0,0,0.5)] flex flex-col justify-between">
+          <div className="p-8 rounded-2xl bg-surface-900/80 border border-white/10 hover:border-white/20 backdrop-blur-md relative transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(0,0,0,0.5)] flex flex-col justify-between">
             <div>
               <span className="text-xs font-mono text-[#00A8FF] uppercase tracking-widest block mb-4">
                 03 // FRESHNESS
@@ -392,7 +392,7 @@ export const Landing: React.FC = () => {
           </div>
 
           {/* Bento Card 4 */}
-          <div className="p-8 rounded-2xl bg-surface-900 border border-white/10 hover:border-white/20 backdrop-blur-md relative transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(0,0,0,0.5)] flex flex-col justify-between">
+          <div className="p-8 rounded-2xl bg-surface-900/80 border border-white/10 hover:border-white/20 backdrop-blur-md relative transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(0,0,0,0.5)] flex flex-col justify-between">
             <div>
               <span className="text-xs font-mono text-amber-400 uppercase tracking-widest block mb-4">
                 04 // RESTOCKING
@@ -414,7 +414,7 @@ export const Landing: React.FC = () => {
       {/* ======================================================== */}
       {/* 7. SHOPPING CTA BANNER                                    */}
       {/* ======================================================== */}
-      <section className="py-24 px-6 sm:px-12 text-center bg-gradient-to-b from-surface-950 via-[#040507] to-black relative overflow-hidden">
+      <section className="py-24 px-6 sm:px-12 text-center bg-transparent relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,168,255,0.08),transparent_70%)] pointer-events-none" />
 
         <div className="max-w-3xl mx-auto relative z-10">
