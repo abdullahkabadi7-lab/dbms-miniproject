@@ -44,7 +44,7 @@ class MockStore {
   private orders: Order[] = [];
   private transactions: StockTransaction[] = [];
   private cart: CartItem[] = [];
-  private currentUser: User = DEMO_USERS[1]; // Alex Morgan (customer) by default
+  private currentUser: User | null = null;
   private listeners: Set<Listener> = new Set();
   private backendSynced = false;
 
@@ -77,7 +77,7 @@ class MockStore {
       this.cart = storedCart ? JSON.parse(storedCart) : [];
 
       const storedUser = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
-      this.currentUser = storedUser ? JSON.parse(storedUser) : DEMO_USERS[1];
+      this.currentUser = storedUser ? JSON.parse(storedUser) : null;
     } catch {
       this.categories = [...INITIAL_CATEGORIES];
       this.suppliers = [...INITIAL_SUPPLIERS];
@@ -86,7 +86,7 @@ class MockStore {
       this.orders = [...INITIAL_ORDERS];
       this.transactions = [...INITIAL_TRANSACTIONS];
       this.cart = [];
-      this.currentUser = DEMO_USERS[1];
+      this.currentUser = null;
     }
   }
 
@@ -263,9 +263,10 @@ class MockStore {
   }
 
   public getCustomerOrders(customerId?: string | number): Order[] {
-    const targetId = customerId ? String(customerId) : String(this.currentUser.user_id);
+    const targetId = customerId ? String(customerId) : (this.currentUser ? String(this.currentUser.user_id) : '');
+    const userEmail = this.currentUser?.email || '';
     return this.orders
-      .filter(o => String(o.customer_id) === targetId || o.customer_email === this.currentUser.email)
+      .filter(o => (targetId && String(o.customer_id) === targetId) || (userEmail && o.customer_email === userEmail))
       .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
   }
 
@@ -355,11 +356,11 @@ class MockStore {
       return { success: false, error: 'Cannot checkout with an empty cart.' };
     }
 
-    // Attempt direct ACID transaction via PostgreSQL Backend API
+    const userId = this.currentUser ? this.currentUser.user_id : 'usr-cust-01';
     try {
       const payload = {
-        userId: this.currentUser.user_id,
-        user_id: this.currentUser.user_id,
+        userId: userId,
+        user_id: userId,
         fullName: customerData.fullName,
         email: customerData.email,
         phone: customerData.phone,
@@ -451,7 +452,7 @@ class MockStore {
 
     const newOrder: Order = {
       order_id: orderId,
-      customer_id: this.currentUser.user_id,
+      customer_id: this.currentUser ? this.currentUser.user_id : 'usr-cust-01',
       customer_name: customerData.fullName,
       customer_email: customerData.email,
       customer_phone: customerData.phone,
@@ -677,11 +678,19 @@ class MockStore {
   }
 
   // Auth / Role State
-  public getCurrentUser(): User {
+  public getCurrentUser(): User | null {
     return this.currentUser;
   }
 
-  public setCurrentUser(user: User): User {
+  public isAuthenticated(): boolean {
+    return this.currentUser !== null;
+  }
+
+  public isAdmin(): boolean {
+    return this.currentUser?.role === 'admin';
+  }
+
+  public setCurrentUser(user: User | null): User | null {
     this.currentUser = user;
     this.persist();
     return user;
@@ -689,11 +698,53 @@ class MockStore {
 
   public switchRole(role: UserRole) {
     if (role === 'admin') {
-      this.currentUser = DEMO_USERS[0]; // Sarah Connor (admin)
+      this.currentUser = DEMO_USERS[0]; // admin
     } else {
-      this.currentUser = DEMO_USERS[1]; // Alex Morgan (customer)
+      this.currentUser = DEMO_USERS[1]; // Alex Morgan
     }
     this.persist();
+  }
+
+  public async loginWithCredentials(identifier: string, pass: string): Promise<{ success: boolean; user?: User; message?: string }> {
+    const id = identifier.trim().toLowerCase();
+    const password = pass.trim();
+
+    // 1. Try real PostgreSQL API
+    try {
+      const res = await apiClient.post<{ success: boolean; user?: User; message?: string }>('/auth/login', {
+        username: identifier,
+        email: identifier,
+        password: password
+      });
+      if (res.success && res.user) {
+        this.currentUser = res.user;
+        this.persist();
+        return { success: true, user: res.user };
+      }
+    } catch (e: any) {
+      if (e.message && (e.message.includes('Invalid') || e.message.includes('password'))) {
+        return { success: false, message: e.message };
+      }
+    }
+
+    // 2. Demo credentials fallback:
+    // A. Customer: Alex Morgan / 123456
+    if ((id === 'alex morgan' || id === 'alex.morgan@example.com' || id === 'alex') && password === '123456') {
+      const user = DEMO_USERS[1];
+      this.currentUser = user;
+      this.persist();
+      return { success: true, user };
+    }
+
+    // B. Admin: admin / 889842
+    if ((id === 'admin' || id === 'admin@smartmart.com') && password === '889842') {
+      const user = DEMO_USERS[0];
+      this.currentUser = user;
+      this.persist();
+      return { success: true, user };
+    }
+
+    return { success: false, message: 'Invalid username/email or password.' };
   }
 
   public login(email: string, role: UserRole = 'customer'): User {
@@ -753,7 +804,7 @@ class MockStore {
   }
 
   public logout() {
-    this.currentUser = DEMO_USERS[1]; // Fallback to demo customer
+    this.currentUser = null;
     this.persist();
   }
 

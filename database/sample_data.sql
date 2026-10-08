@@ -7,9 +7,9 @@
 -- 1. USERS
 -- ----------------------------------------------------------------------------
 INSERT INTO users (user_id, full_name, email, password, role, phone, address) VALUES
-(1, 'Sarah Connor', 'admin@smartmart.com', '889842', 'admin', '+1 (555) 019-2831', 'SmartMart Operations Hub, 100 Logistics Blvd, Seattle, WA'),
-(2, 'Alex Morgan', 'alex.morgan@example.com', '$2b$10$hashedCustomerPassword123', 'customer', '+1 (555) 789-0123', '742 Evergreen Terrace, Springfield, OR 97477'),
-(3, 'Jordan Lee', 'jordan.lee@example.com', '$2b$10$hashedCustomerPassword456', 'customer', '+1 (555) 456-7890', '1088 Point Reyes Station, Marin County, CA 94956');
+(1, 'admin', 'admin@smartmart.com', '889842', 'admin', '+1 (555) 019-2831', 'SmartMart Operations Hub, 100 Logistics Blvd, Seattle, WA'),
+(2, 'Alex Morgan', 'alex.morgan@example.com', '123456', 'customer', '+1 (555) 789-0123', '742 Evergreen Terrace, Springfield, OR 97477'),
+(3, 'Jordan Lee', 'jordan.lee@example.com', '123456', 'customer', '+1 (555) 456-7890', '1088 Point Reyes Station, Marin County, CA 94956');
 
 SELECT setval('users_user_id_seq', (SELECT MAX(user_id) FROM users));
 

@@ -35,6 +35,12 @@ export const AdminLayout: React.FC = () => {
     { name: 'Stock Transactions', href: '/admin/transactions', icon: History },
   ];
 
+  React.useEffect(() => {
+    if (!mockStore.isAdmin()) {
+      navigate('/login?redirect=/admin');
+    }
+  }, [navigate, currentUser]);
+
   const handleResetData = () => {
     if (window.confirm('Reset all demo products, inventory, and orders to initial defaults?')) {
       mockStore.resetAllToDefaults();
@@ -43,9 +49,20 @@ export const AdminLayout: React.FC = () => {
   };
 
   const handleLogout = () => {
-    mockStore.switchRole('customer');
-    navigate('/');
+    mockStore.logout();
+    navigate('/login');
   };
+
+  if (!currentUser || currentUser.role !== 'admin') {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center font-mono text-sm">
+        <div className="text-center space-y-3 p-8 border border-neutral-900 bg-[#0A0A0A] max-w-sm">
+          <div className="text-[#00A8FF] font-bold tracking-widest uppercase">ADMIN ACCESS RESTRICTED</div>
+          <div className="text-neutral-400 text-xs">Administrator credentials required. Redirecting to sign in...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black text-white flex">

@@ -15,13 +15,17 @@ export const Checkout: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
-    fullName: currentUser.full_name || 'Alex Morgan',
-    email: currentUser.email || 'alex.morgan@example.com',
-    phone: currentUser.phone || '+1 (555) 789-0123',
-    shippingAddress: currentUser.address || '742 Evergreen Terrace, Springfield, OR 97477'
+    fullName: currentUser?.full_name || 'Alex Morgan',
+    email: currentUser?.email || 'alex.morgan@example.com',
+    phone: currentUser?.phone || '+1 (555) 789-0123',
+    shippingAddress: currentUser?.address || '742 Evergreen Terrace, Springfield, OR 97477'
   });
 
   useEffect(() => {
+    if (!mockStore.isAuthenticated()) {
+      navigate('/login?redirect=/checkout');
+      return;
+    }
     const items = mockStore.getCart();
     if (items.length === 0) {
       navigate('/cart');

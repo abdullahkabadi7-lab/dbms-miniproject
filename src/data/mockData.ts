@@ -472,14 +472,15 @@ export const INITIAL_TRANSACTIONS: StockTransaction[] = [
   }
 ];
 
-export const DEMO_USERS: User[] = [
+export const DEMO_USERS: (User & { password?: string })[] = [
   {
     user_id: 'usr-admin-01',
     email: 'admin@smartmart.com',
-    full_name: 'Sarah Connor',
+    full_name: 'admin',
     phone: '+1 (555) 019-2831',
     address: 'SmartMart Operations Hub, 100 Logistics Blvd, Seattle, WA',
     role: 'admin',
+    password: '889842',
     created_at: '2026-01-01T00:00:00Z'
   },
   {
@@ -489,6 +490,7 @@ export const DEMO_USERS: User[] = [
     phone: '+1 (555) 789-0123',
     address: '742 Evergreen Terrace, Springfield, OR 97477',
     role: 'customer',
+    password: '123456',
     created_at: '2026-02-14T10:00:00Z'
   }
 ];

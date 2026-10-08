@@ -35,6 +35,14 @@ export const Cart: React.FC = () => {
     }
   };
 
+  const handleProceedToCheckout = () => {
+    if (!mockStore.isAuthenticated()) {
+      navigate('/login?redirect=/checkout');
+    } else {
+      navigate('/checkout');
+    }
+  };
+
   if (cartItems.length === 0) {
     return (
       <div className="min-h-[70vh] bg-black text-white flex items-center justify-center p-6">
@@ -139,7 +147,7 @@ export const Cart: React.FC = () => {
 
             {/* Checkout Luxury Pill CTA */}
             <Button
-              onClick={() => navigate('/checkout')}
+              onClick={handleProceedToCheckout}
               variant="accent"
               size="lg"
               icon={<ArrowRight className="w-4 h-4" />}

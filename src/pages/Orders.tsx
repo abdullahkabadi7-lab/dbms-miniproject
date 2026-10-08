@@ -1,22 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Package, ArrowRight, Calendar, DollarSign, Clock, ShieldCheck } from 'lucide-react';
 import { Order } from '../types';
 import { mockStore } from '../services/mockStore';
 import { EmptyState } from '../components/EmptyState';
 
 export const Orders: React.FC = () => {
+  const navigate = useNavigate();
   const [orders, setOrders] = useState<Order[]>([]);
   const currentUser = mockStore.getCurrentUser();
 
   useEffect(() => {
+    if (!mockStore.isAuthenticated()) {
+      navigate('/login?redirect=/orders');
+      return;
+    }
     const load = () => {
-      setOrders(mockStore.getCustomerOrders(currentUser.user_id));
+      if (currentUser) {
+        setOrders(mockStore.getCustomerOrders(currentUser.user_id));
+      }
     };
     load();
     const unsub = mockStore.subscribe(load);
     return () => unsub();
-  }, [currentUser]);
+  }, [currentUser, navigate]);
 
   return (
     <div className="w-full min-h-screen bg-black text-white py-12 px-4 sm:px-6 lg:px-8">

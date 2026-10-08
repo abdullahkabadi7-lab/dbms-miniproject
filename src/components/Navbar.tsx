@@ -17,7 +17,7 @@ import { Button } from './ui/Button';
 export const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [cartCount, setCartCount] = useState(0);
-  const [currentUser, setCurrentUser] = useState<User>(mockStore.getCurrentUser());
+  const [currentUser, setCurrentUser] = useState<User | null>(mockStore.getCurrentUser());
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -43,7 +43,7 @@ export const Navbar: React.FC = () => {
   ];
 
   const handleToggleRole = () => {
-    if (currentUser.role === 'admin') {
+    if (currentUser?.role === 'admin') {
       mockStore.switchRole('customer');
       navigate('/');
     } else {
@@ -199,19 +199,42 @@ export const Navbar: React.FC = () => {
           </nav>
 
           <div className="pt-4 border-t border-neutral-800 flex flex-col gap-3 font-mono text-xs">
-            <div className="text-neutral-400 flex items-center justify-between">
-              <span>USER:</span>
-              <span className="text-white">{currentUser.full_name}</span>
-            </div>
-            <button
-              onClick={() => {
-                handleToggleRole();
-                setIsOpen(false);
-              }}
-              className="w-full py-2 bg-neutral-900 border border-neutral-800 text-white uppercase tracking-wider text-center cursor-pointer"
-            >
-              SWITCH TO {currentUser.role === 'admin' ? 'CUSTOMER' : 'ADMIN'}
-            </button>
+            {currentUser ? (
+              <>
+                <div className="text-neutral-400 flex items-center justify-between">
+                  <span>USER:</span>
+                  <span className="text-white">{currentUser.full_name}</span>
+                </div>
+                <button
+                  onClick={() => {
+                    handleToggleRole();
+                    setIsOpen(false);
+                  }}
+                  className="w-full py-2 bg-neutral-900 border border-neutral-800 text-white uppercase tracking-wider text-center cursor-pointer"
+                >
+                  SWITCH TO {currentUser.role === 'admin' ? 'CUSTOMER' : 'ADMIN'}
+                </button>
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setIsOpen(false);
+                  }}
+                  className="w-full py-2 bg-red-950/40 border border-red-900 text-red-300 uppercase tracking-wider text-center cursor-pointer"
+                >
+                  SIGN OUT
+                </button>
+              </>
+            ) : (
+              <Button
+                to="/login"
+                variant="accent"
+                size="sm"
+                className="w-full text-center justify-center"
+                onClick={() => setIsOpen(false)}
+              >
+                SIGN IN TO ACCOUNT
+              </Button>
+            )}
           </div>
         </div>
       )}
