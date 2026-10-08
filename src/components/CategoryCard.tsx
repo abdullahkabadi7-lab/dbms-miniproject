@@ -11,18 +11,18 @@ export const CategoryCard: React.FC<CategoryCardProps> = ({ category }) => {
   return (
     <Link
       to={`/shop?category=${category.category_id}`}
-      className="group relative block aspect-[4/5] sm:aspect-square rounded-2xl overflow-hidden border border-white/10 hover:border-white/30 bg-[#09090e] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(0,0,0,0.7),0_0_25px_rgba(0,168,255,0.15)]"
+      className="group relative block aspect-[4/5] sm:aspect-square rounded-2xl overflow-hidden border border-white/[0.08] hover:border-white/25 bg-surface-900 transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(0,0,0,0.7),0_0_20px_rgba(0,168,255,0.1)]"
     >
       {/* Top Edge Specular Reflection */}
-      <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/30 to-transparent pointer-events-none opacity-40 group-hover:opacity-100 transition-opacity z-20" />
+      <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none opacity-40 group-hover:opacity-100 group-hover:via-[#00A8FF]/40 transition-all duration-300 z-20" />
 
       {/* Background Image */}
       <img
         src={category.image_url}
         alt={category.name}
-        className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-108 opacity-65 group-hover:opacity-50"
+        className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 opacity-65 group-hover:opacity-50"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#040507] via-[#040507]/60 to-transparent pointer-events-none" />
 
       {/* Content */}
       <div className="absolute inset-0 p-6 flex flex-col justify-between pointer-events-none z-10">

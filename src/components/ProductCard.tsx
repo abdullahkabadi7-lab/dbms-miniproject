@@ -29,16 +29,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onAddedToCart
   };
 
   return (
-    <div className="group relative flex flex-col rounded-2xl bg-[#09090d]/80 border border-white/10 hover:border-white/25 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(0,0,0,0.6),0_0_20px_rgba(0,168,255,0.12)] overflow-hidden">
+    <div className="group relative flex flex-col rounded-2xl bg-surface-900 border border-white/[0.08] hover:border-white/20 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_rgba(0,0,0,0.6),0_0_20px_rgba(0,168,255,0.08)] overflow-hidden">
       {/* Specular Card Top Highlight */}
-      <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none opacity-40 group-hover:opacity-100 transition-opacity" />
+      <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none opacity-40 group-hover:opacity-100 group-hover:via-[#00A8FF]/40 transition-all duration-300" />
 
       {/* Product Image Area */}
-      <Link to={`/product/${product.product_id}`} className="relative block aspect-square overflow-hidden bg-black/60">
+      <Link to={`/product/${product.product_id}`} className="relative block aspect-square overflow-hidden bg-black/40">
         <img
           src={product.image_url}
           alt={product.name}
-          className={`w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-108 ${
+          className={`w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 ${
             isOutOfStock ? 'opacity-35 grayscale' : 'opacity-90 group-hover:opacity-100'
           }`}
           loading="lazy"
@@ -46,7 +46,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onAddedToCart
         <div className="absolute top-3 left-3 z-10">
           <StockBadge status={product.stock_status} stockCount={product.current_stock} />
         </div>
-        <div className="absolute bottom-3 left-3 text-[10px] font-mono text-neutral-300 bg-black/75 backdrop-blur-md px-2.5 py-0.5 rounded-full border border-white/10">
+        <div className="absolute bottom-3 left-3 text-[10px] font-mono text-neutral-300 bg-surface-950/80 backdrop-blur-md px-2.5 py-0.5 rounded-full border border-white/10">
           {product.sku}
         </div>
       </Link>
@@ -55,12 +55,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onAddedToCart
       <div className="p-5 flex flex-col flex-1 justify-between gap-4">
         <div>
           <div className="flex items-center justify-between gap-2 mb-1.5">
-            <span className="text-[10px] font-mono uppercase tracking-widest text-[#00A8FF]/90 font-medium">
+            <span className="text-[10px] font-mono uppercase tracking-widest text-[#00A8FF] font-medium">
               {product.category_name}
             </span>
           </div>
           <Link to={`/product/${product.product_id}`} className="block">
-            <h3 className="font-display font-medium text-white text-base leading-snug line-clamp-2 hover:text-[#29C5FF] transition-colors">
+            <h3 className="font-display font-semibold text-white text-base leading-snug line-clamp-2 hover:text-[#38BDF8] transition-colors">
               {product.name}
             </h3>
           </Link>

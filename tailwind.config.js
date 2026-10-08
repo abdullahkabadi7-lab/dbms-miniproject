@@ -9,26 +9,38 @@ export default {
       colors: {
         primary: "#000000",
         surface: {
-          900: "#050505",
-          800: "#0A0A0A",
-          700: "#121212",
+          950: "#040507",
+          900: "#08090E",
+          850: "#0D0F16",
+          800: "#12151E",
+          700: "#181C28",
+          600: "#242938",
         },
-        border: "#1A1A1A",
+        border: {
+          DEFAULT: "#181C26",
+          subtle: "rgba(255, 255, 255, 0.08)",
+          hover: "rgba(255, 255, 255, 0.18)",
+        },
         electric: {
           DEFAULT: "#00A8FF",
-          bright: "#29C5FF",
+          bright: "#38BDF8",
           dark: "#0077B6",
+          neon: "#00E5FF",
           glow: "rgba(0, 168, 255, 0.15)",
+        },
+        emerald: {
+          glow: "rgba(16, 185, 129, 0.15)",
         },
         text: {
           primary: "#FFFFFF",
-          secondary: "#A0A0A0",
-          muted: "#666666",
+          secondary: "#94A3B8",
+          muted: "#64748B",
         }
       },
       fontFamily: {
-        sans: ['"Inter"', 'system-ui', '-apple-system', 'sans-serif'],
-        display: ['"Space Grotesk"', '"Inter"', 'sans-serif'],
+        sans: ['"Plus Jakarta Sans"', '"Inter"', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['"Outfit"', '"Space Grotesk"', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
       },
       letterSpacing: {
         tighter: '-0.04em',

@@ -57,7 +57,7 @@ export const Inventory: React.FC = () => {
           </h1>
         </div>
 
-        <div className="flex items-center gap-2 text-xs font-mono text-neutral-400 bg-[#0A0A0A] px-3 py-1.5 border border-neutral-800">
+        <div className="flex items-center gap-2 text-xs font-mono text-neutral-300 bg-surface-900 px-3 py-1.5 rounded-lg border border-white/10">
           <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
           <span>CHECK (current_stock &gt;= 0)</span>
         </div>
@@ -72,31 +72,31 @@ export const Inventory: React.FC = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search SKU or product title..."
-            className="w-full bg-[#0A0A0A] border border-neutral-800 text-white placeholder-neutral-400 pl-10 pr-4 py-2.5 text-xs font-mono focus:outline-none focus:border-[#00A8FF]"
+            className="w-full bg-surface-900 border border-white/10 rounded-xl text-white placeholder-neutral-400 pl-10 pr-4 py-2.5 text-xs font-mono focus:outline-none focus:border-[#00A8FF]"
           />
         </div>
 
-        <div className="flex items-center bg-[#0A0A0A] border border-neutral-800 text-xs font-mono">
-          <span className="px-3 text-neutral-400 border-r border-neutral-800">STATUS:</span>
+        <div className="flex items-center bg-surface-900 border border-white/10 rounded-xl text-xs font-mono overflow-hidden">
+          <span className="px-3 text-neutral-400 border-r border-white/10">STATUS:</span>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             className="bg-transparent text-white px-3 py-2.5 focus:outline-none cursor-pointer"
           >
-            <option value="all" className="bg-[#0A0A0A]">All Inventory</option>
-            <option value="IN_STOCK" className="bg-[#0A0A0A]">In Stock</option>
-            <option value="LOW_STOCK" className="bg-[#0A0A0A]">Low Stock Alert</option>
-            <option value="OUT_OF_STOCK" className="bg-[#0A0A0A]">Out of Stock</option>
+            <option value="all" className="bg-[#08090E]">All Inventory</option>
+            <option value="IN_STOCK" className="bg-[#08090E]">In Stock</option>
+            <option value="LOW_STOCK" className="bg-[#08090E]">Low Stock Alert</option>
+            <option value="OUT_OF_STOCK" className="bg-[#08090E]">Out of Stock</option>
           </select>
         </div>
       </div>
 
       {/* Inventory Table */}
-      <div className="bg-[#0A0A0A] border border-neutral-900 overflow-hidden">
+      <div className="bg-surface-900 border border-white/[0.08] rounded-2xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left font-mono text-xs">
             <thead>
-              <tr className="bg-[#050505] border-b border-neutral-900 text-[10px] text-neutral-400 uppercase">
+              <tr className="bg-surface-950 border-b border-white/[0.08] text-[10px] text-neutral-400 uppercase">
                 <th className="p-4">PRODUCT RECORD</th>
                 <th className="p-4">DEPARTMENT</th>
                 <th className="p-4 text-right">CURRENT STOCK</th>
@@ -105,15 +105,15 @@ export const Inventory: React.FC = () => {
                 <th className="p-4 text-right">ACTION</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-900">
+            <tbody className="divide-y divide-white/[0.04]">
               {filtered.map((prod) => (
-                <tr key={prod.product_id} className="hover:bg-neutral-900/30 transition-colors">
+                <tr key={prod.product_id} className="hover:bg-white/[0.02] transition-colors">
                   <td className="p-4">
                     <div className="flex items-center gap-3">
                       <img
                         src={prod.image_url}
                         alt=""
-                        className="w-10 h-10 object-cover bg-black border border-neutral-800 shrink-0"
+                        className="w-10 h-10 object-cover bg-black border border-white/10 rounded-lg shrink-0"
                       />
                       <div>
                         <div className="text-white font-sans font-medium">{prod.name}</div>
@@ -125,7 +125,7 @@ export const Inventory: React.FC = () => {
                   <td className="p-4 text-right">
                     <span className={`font-bold text-sm ${
                       prod.current_stock === 0
-                        ? 'text-neutral-500'
+                        ? 'text-rose-400'
                         : prod.current_stock <= prod.reorder_level
                         ? 'text-amber-400'
                         : 'text-white'
@@ -145,7 +145,7 @@ export const Inventory: React.FC = () => {
                         setSelectedProduct(prod);
                         setRestockAmount(Math.max(15, prod.reorder_level * 2));
                       }}
-                      className="px-3 py-1.5 bg-[#00A8FF]/10 border border-[#00A8FF]/40 text-[#00A8FF] hover:bg-[#00A8FF] hover:text-black font-mono text-[11px] tracking-wider uppercase transition-colors"
+                      className="px-3.5 py-1.5 bg-[#00A8FF]/10 border border-[#00A8FF]/30 text-[#00A8FF] hover:bg-[#00A8FF] hover:text-black font-mono text-[11px] tracking-wider uppercase rounded-lg transition-all font-semibold"
                     >
                       RESTOCK +
                     </button>

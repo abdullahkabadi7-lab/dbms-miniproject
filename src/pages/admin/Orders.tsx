@@ -58,16 +58,16 @@ export const Orders: React.FC = () => {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Filter by Order ID, customer name, email..."
-          className="w-full bg-[#0A0A0A] border border-neutral-800 text-white placeholder-neutral-400 pl-10 pr-4 py-2.5 text-xs font-mono focus:outline-none focus:border-[#00A8FF]"
+          className="w-full bg-surface-900 border border-white/10 rounded-xl text-white placeholder-neutral-400 pl-10 pr-4 py-2.5 text-xs font-mono focus:outline-none focus:border-[#00A8FF]"
         />
       </div>
 
       {/* Orders Table */}
-      <div className="bg-[#0A0A0A] border border-neutral-900 overflow-hidden">
+      <div className="bg-surface-900 border border-white/[0.08] rounded-2xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left font-mono text-xs">
             <thead>
-              <tr className="bg-[#050505] border-b border-neutral-900 text-[10px] text-neutral-400 uppercase">
+              <tr className="bg-surface-950 border-b border-white/[0.08] text-[10px] text-neutral-400 uppercase">
                 <th className="p-4">ORDER ID</th>
                 <th className="p-4">CUSTOMER</th>
                 <th className="p-4">DATE & TIME</th>
@@ -77,11 +77,11 @@ export const Orders: React.FC = () => {
                 <th className="p-4 text-right">INSPECT</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-900">
+            <tbody className="divide-y divide-white/[0.04]">
               {filtered.map((ord) => {
                 const itemCount = ord.items?.reduce((s, i) => s + i.quantity, 0) || 0;
                 return (
-                  <tr key={ord.order_id} className="hover:bg-neutral-900/30 transition-colors">
+                  <tr key={ord.order_id} className="hover:bg-white/[0.02] transition-colors">
                     <td className="p-4 font-bold text-white tracking-wider">
                       {ord.order_id}
                     </td>
@@ -99,14 +99,14 @@ export const Orders: React.FC = () => {
                       ${ord.total.toFixed(2)}
                     </td>
                     <td className="p-4 text-center">
-                      <span className="px-2.5 py-0.5 text-[10px] uppercase font-bold tracking-wider border border-emerald-900 bg-emerald-950/20 text-emerald-400">
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] uppercase font-bold tracking-wider border border-emerald-500/30 bg-emerald-950/40 text-emerald-300">
                         {ord.status}
                       </span>
                     </td>
                     <td className="p-4 text-right">
                       <button
                         onClick={() => setSelectedOrder(ord)}
-                        className="p-1.5 text-neutral-400 hover:text-[#00A8FF] hover:bg-neutral-900 transition-colors"
+                        className="p-2 text-neutral-400 hover:text-[#00A8FF] hover:bg-white/5 rounded-lg transition-colors"
                         title="Inspect Order Details"
                       >
                         <Eye className="w-4 h-4" />
